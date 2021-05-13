@@ -1,0 +1,19 @@
+ideas:
+	- talk about functional programming
+		- why over oo
+		- cause oo gay and unecersarry for this project
+		- there is really no real world objects to model and to use oo would be irrational
+		- sticking to funcitonal ideologies for the benefits they give
+			- easier debugging
+			- greater code reuse
+			- ...
+	- need to run through all the data structures
+		- started with reading the code object of the code
+		- then i converted it to a list of tuples
+		- converted those tuples 
+	- why did i use bytecode rather than an ast?
+		- i id this because of monotonicity
+			- not that word but the regular structure of lisp works the best
+		- python ast is not regular and has many little different things
+		- and the bytecode is regular and makes writing the macro far easier and more understandable
+		- this is where current python metaprogramming libraries fall down

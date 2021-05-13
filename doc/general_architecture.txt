@@ -1,0 +1,7 @@
+separated into 3 different sections
+	- uncompile
+		- takes a python code object and generates a cpyasm source string from it
+	- bytecode compiler
+		- takes a string and generaes either a pyc file or a python code object
+	- meta
+		- handles exposing the bytecode source code to a python api for metaprogrmaming

@@ -1,0 +1,8 @@
+DEFINE main 
+LOAD_NAME print
+LOAD_CONST "hello world!"
+CALL_FUNCTION 1
+POP_TOP 0
+LOAD_CONST None
+RETURN_VALUE 0
+end

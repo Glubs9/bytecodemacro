@@ -1,0 +1,50 @@
+#testing recursion to see if i did cyclic dependency worked
+DEFINE fib n
+load_fast n
+load_const 1
+compare_op <=
+pop_jump_if_false else
+
+load_fast n
+return_value
+
+else:
+load_object fib
+load_const "fib"
+make_function 0
+store_fast fib_call
+
+load_fast n
+load_const 1
+binary_subtract
+load_fast fib_call
+rot_two
+call_function 1
+
+load_fast n
+load_const 2
+binary_subtract
+load_fast fib_call
+rot_two
+call_function 1
+
+binary_add
+return_value
+end
+
+
+define main
+
+load_name print
+load_object fib
+load_const "fib"
+make_function 0
+store_name fib
+load_name fib
+load_const 8
+call_function 1
+call_function 1
+
+load_const None
+return_value
+end

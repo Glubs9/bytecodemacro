@@ -1,0 +1,13 @@
+alright so this is the current theory
+
+meta takes two files (maybe strings), one being the source file and the other being the macros file
+
+added syntax
+	- quote for literal strings that are directly put into the source
+	- compile which compiles a given string and converts it to bytecode
+	- to specify which sections of source will be macro'd we can put delimiters either side with
+	the function we want to macro around it
+		- if multiple layers then we should be able to do inner first
+
+think of a use for macros that isn't added syntax
+	- i really like that idea on stack optimizaitons

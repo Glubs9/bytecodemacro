@@ -1,0 +1,2 @@
+for all the common subroutines for all three sections
+	- as of right now i have no clue how to do this so i will do it later

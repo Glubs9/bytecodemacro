@@ -1,0 +1,29 @@
+#this file tests if we can define private functions
+#the difference between this one and the prev is that store_name is never used for a
+
+DEFINE a
+load_name print
+load_const "in a"
+call_function 1
+load_const None
+return_value
+end
+
+DEFINE b
+load_object a
+load_const "a"
+make_function 0
+call_function 0
+load_const None
+return_value
+end
+
+DEFINE main
+load_object b
+load_const "b"
+make_function 0
+store_name b
+
+load_const None
+return_value
+end

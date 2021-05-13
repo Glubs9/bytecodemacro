@@ -1,0 +1,21 @@
+load_name range
+load_const 1
+load_const 11
+call_function 2
+get_iter
+
+start:
+
+for_iter end
+store_name n
+
+load_name print
+load_name n
+call_function 1
+pop_top
+
+jump_absolute start
+
+end:
+load_const None
+return_value

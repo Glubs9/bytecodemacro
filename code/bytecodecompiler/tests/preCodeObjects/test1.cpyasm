@@ -1,0 +1,7 @@
+#this was written before code objects existed
+load_name print
+load_const "Hello world"
+call_function 1
+
+load_const None
+return_value

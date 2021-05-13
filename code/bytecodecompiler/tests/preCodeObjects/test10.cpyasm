@@ -1,0 +1,16 @@
+load_const 2
+load_const 2
+
+while:
+
+dup_top
+load_name print
+rot_two
+call_function 1
+pop_top
+
+dup_top
+rot_three
+inplace_power
+
+jump_absolute while

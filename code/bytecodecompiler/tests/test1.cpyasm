@@ -1,0 +1,24 @@
+DEFINE adder n1 n2
+load_fast n1
+load_Fast n2
+BINARY_ADD
+return_value
+end
+
+
+define main
+
+load_name print
+
+load_object adder
+load_const "adder"
+make_function 0
+load_const 2
+load_const 3
+call_function 2
+
+call_function 1
+
+load_const None
+return_value
+end
