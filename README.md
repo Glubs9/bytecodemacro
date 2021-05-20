@@ -7,6 +7,7 @@ the examples in meta to see how to use the library and just try to figure it out
 note: as of the current state of documentation i would absolutely not recommended trying this out. But if you come back later I should have added documentation.
 
 # todo
+	- test pip
 	- add documentation on the modifications to bytecode and how to read it
 	- allow for uncompile and the compile packages to be used independently on files for other cool stuff
 	- for some reason semantic checking is occuring with the compile method in macro_lib for byte_code tuple assembly from strings, check why and fix
