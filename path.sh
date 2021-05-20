@@ -1,3 +1,4 @@
 #!/bin/sh
 #needs to be executed with source path.sh
-export PYTHONPATH="$PWD/src"
+#used to do local testing of package
+export PYTHONPATH="$PWD/bytecodemacro"

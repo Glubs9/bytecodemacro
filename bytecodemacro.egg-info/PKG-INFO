@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: bytecodemacro
-Version: 1.0.0
+Version: 2.0.0
 Summary: a macro library that expoes the bytecode of python
 Home-page: https://github.com/Glubs9/bytecodemacro
 Author: glubs9
@@ -15,6 +15,7 @@ Description: # bytecode macro lib
         note: as of the current state of documentation i would absolutely not recommended trying this out. But if you come back later I should have added documentation.
         
         # todo
+        	- test pip
         	- add documentation on the modifications to bytecode and how to read it
         	- allow for uncompile and the compile packages to be used independently on files for other cool stuff
         	- for some reason semantic checking is occuring with the compile method in macro_lib for byte_code tuple assembly from strings, check why and fix
@@ -24,7 +25,8 @@ Description: # bytecode macro lib
         		- add temporary files, compilation and output files to this
         	- remove outdated tests in bytecode asm after documentation has finished
         	- remove all other temporary test files
+        	- remove the example files in meta and move them to the documentation for some examples
+        	- do something about those long ass import statements
         
 Platform: UNKNOWN
-Classifier: Programming Language :: Python :: 3.9.0
 Description-Content-Type: text/markdown
