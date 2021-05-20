@@ -12,3 +12,6 @@ note: as of the current state of documentation i would absolutely not recommende
 	- for some reason semantic checking is occuring with the compile method in macro_lib for byte_code tuple assembly from strings, check why and fix
 	- increase code re-use
 	- clean code of stuff that isn't used from when this was a different project (all the file stuff and header.py)
+	- add a .gitignore 
+	- remove outdated tests in bytecode asm after documentation has finished
+	- remove all other temporary test files
