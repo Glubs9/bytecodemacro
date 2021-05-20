@@ -1,5 +1,5 @@
 import pathlib
-from setuptools import setup
+from setuptools import setup, find_packages
 
 HERE = pathlib.Path(__file__).parent
 
@@ -15,10 +15,9 @@ setup(
         author="glubs9",
         author_email="jonte.fry@gmail.com", #please no spam
         license="GPLv3",
-        classifiers=[
-            "Programming Language :: Python :: 3.9.0",
-        ],
-        packages=find_packages(), #can't be bothered to do properly
-        include_package_data=True #i'm not sure what this does
-        #i'm not too sure how to specify entry_points
+        #classifiers=[ #apparnetly this is not a valid classifier idk how this works
+        #    "Programming Language :: Python :: 3.9",
+        #],
+        packages=find_packages() #can't be bothered to do properly
+        #i'm not too sure how to specify entry_points (or if i need to)
 )
