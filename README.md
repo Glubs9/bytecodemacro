@@ -13,5 +13,6 @@ note: as of the current state of documentation i would absolutely not recommende
 	- increase code re-use
 	- clean code of stuff that isn't used from when this was a different project (all the file stuff and header.py)
 	- add a .gitignore 
+		- add temporary files, compilation and output files to this
 	- remove outdated tests in bytecode asm after documentation has finished
 	- remove all other temporary test files
