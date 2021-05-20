@@ -1,0 +1,7 @@
+LICENSE
+README.md
+setup.py
+bytecodemacro.egg-info/PKG-INFO
+bytecodemacro.egg-info/SOURCES.txt
+bytecodemacro.egg-info/dependency_links.txt
+bytecodemacro.egg-info/top_level.txt

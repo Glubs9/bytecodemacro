@@ -31,7 +31,7 @@ def cloop(tups):
 
 @macro(cloop)
 def test(a):
-    _ = "for c = 0;c < a;c+=1"
+    _ = "for c = 0;c < 10;c+=1"
     print(c)
     _ = "end"
 test(10)

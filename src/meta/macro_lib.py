@@ -2,21 +2,19 @@ import uncompile.main as main
 import bytecodecompiler.Runner as runner
 from types import FunctionType
 
-#getting erorrs :(
 def macro(mac_mod):
     def ret(f):
         tups = main.main_tups(f.__code__)
         new_func = mac_mod(tups)
         string = main.tups_to_str(new_func)
         code = runner.string_to_code(string, one_obj=True)
-        #return FunctionType(code, {}) #might not work
         return FunctionType(code, globals())
     return ret
 
 #this takes a string and compiles it to cpyasm tups
     #relies on no return statements being sent
-def byte_compile(string):
-    obj = compile(string, "string", "exec")
+def byte_compile(string): #need to pass the state inside the funcdtion with like variables and that
+    obj = compile(string, "string", "exec") #here
     tups = main.main_tups(obj)
     tups = tups[1:-3] #removes define and load_const None return_value end
     return tups
