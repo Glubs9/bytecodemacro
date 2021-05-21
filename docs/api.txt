@@ -10,7 +10,7 @@ note: this function is currently not handling scope very well and will create an
 	for each input string, it will be fixed later but for now, please keep this in mind.
 
 byte_compile_obj(string)
-ADD DOCUMENTATION
+[ADD DOCUMENTATION HERE]
 note: if you are curious what this is doing, i am struggling to explain it and it's not really
 	useful so don't worry too much.
 

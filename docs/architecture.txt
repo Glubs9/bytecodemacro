@@ -1,9 +1,9 @@
-UPDATE THIS FILE
+the package source starts at the bytecodemacro folder
 
-separated into 3 different sections
-	- uncompile
-		- takes a python code object and generates a cpyasm source string from it
-	- bytecode compiler
-		- takes a string and generaes either a pyc file or a python code object
-	- meta
-		- handles exposing the bytecode source code to a python api for metaprogrmaming
+this package is separated into three sub packages
+	meta: exposes the api and calls the other sub packages
+	      the entry point to this package is macro_lib.py
+	uncompile: takes a python code object and returns the bytecode tuple representation
+	           the entry point to this package is main.py
+	bytecodecompiler: takes a bytecode tuple (or maybe a string?) and compiles it to a python code object
+			  the entry point to this package is Runner.py

@@ -18,11 +18,11 @@ more human readable python bytecode format, passes that bytecode to the function
 macro decorator, gets the returned bytecode, converts that back to a python function and returns it.
 Allowing for the newly created and modified function to be used in python code.
 
+for some examples go to examples.py
 for a specification on how the format works refer to bytecode_format.txt
 for a description of all the functions that are available with the package, go to api.txt
-for some examples go to examples.py
 for a guide on the architecture of the packages please refer to architecture.txt
-each file should have a comment a the top of it describing how it is used and what it does.
+for contributing information please go to contributinginformation.txt
 
 please contact me at jonte.fry@gmail.com if you have any questions or you have submitted a pull
 request on github and want to see it included (as i am not very active on github itself so i might

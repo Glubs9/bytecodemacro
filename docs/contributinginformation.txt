@@ -1,0 +1,11 @@
+the source is in the bytecodemacro folder
+
+if you have submitted a pull request and I haven't responded in a couple days please feel free to
+email me at jonte.fry@gmail.com. I'm not too active on github but I check my email every day so I
+should be able to get a response to you asap.
+
+please feel free to contribute! it would really make my day.
+	(or just anyone using the project would be super cool as well)
+	(if you make anything super epic feel free to email me as well)
+
+i don't have much too put here but hopefully sometime in the future i will.
