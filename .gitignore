@@ -1,4 +1,6 @@
 path.sh
+publish_to_pypi.sh
+update_git.sh
 build
 dist
 __pycache__
