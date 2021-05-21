@@ -2,7 +2,7 @@
 exposes (a slightly modified version of) the bytecode of a function to allow for run-time modification of python syntax.
 
 # how to use
-a description of how to use and install the program, please go to the docs folder
+for a description of how to use and install the program, please go to the docs folder
 
 # todo
 	- test pip
