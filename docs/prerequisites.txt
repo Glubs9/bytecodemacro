@@ -1,0 +1,32 @@
+the python interpreter doesn't interpret python code directly, it actually goes through a series of
+steps to allow it to understand and optimize the code. The most important of those steps for this
+project is generation of an intermediate format "python bytecode".
+
+python bytecode is a simple stack based language that is used to represent python code and
+operations for the python virtual machine.
+
+python bytecode itself is a binary format but it is stored in python code objects. You are actually
+able to access these code objects within python itself if you want to have a peek at them by using
+the property __code__. the code object contains some of the important extra information that is
+needed to execute the bytecode. This is because the bytecode itself exists as a series of pairs of
+bytes, with the first being the instruction and the second being the argument. for example the
+mnemonic call_function 1 is stored as 2 bytes with the first being the instruction call_function and
+the second being 1. You'll notice that it is hard to store longer nad more complicated data as a
+series of 2 byte instructions. normally in assembly a data section is identified but in python
+bytecode the data section is stored in the object. so for example if you had load_const 0 as an
+instruction, the python virtual machine would go into the python code object that the bytecode was
+from and take the 0th element from the constant array. A python code object can be used to store a
+lot of different things in python but most importantly it stores functions and classes (including
+the main function). the main function actually contains copies of all the functions and classes
+identified in a file in the constants array and loads each into a global variable. this makes it so
+that any other code object that wants to reference another object can just load from the global
+variable list.
+
+if you want to see some human readable information about python code objects as well as a list of
+all the instructions and their arguments, the in built python package dis is where you should look.
+
+just for general knowledge purposes but is not particularly relevant to this project, a pyc file
+that you sometimes see in __pycache__ is a binary representation of a python code object with a
+header at the start. Originally i made this project to be able to write human readable python
+bytecode and compile it to a pyc file, which is why some of the architecture used in the project is
+a little wonky (though depending on what time you're reading this, it may have been refactored).

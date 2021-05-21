@@ -42,3 +42,5 @@ def unused_var(old_tups, new_tups, test="v1", am=1):
 
 #do something about ret.append() repteaed all the time
     #maybe use goto?
+
+#maybe add unused jump name

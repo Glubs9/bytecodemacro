@@ -1,3 +1,6 @@
+(this is the file for my ideas for presenting this to pycon, if you are reading this, it means i
+ forgot to add this file to the .gitignore)
+
 ideas:
 	- talk about functional programming
 		- why over oo

@@ -1,0 +1,26 @@
+macro(macro_modifier)
+this is the macro decorator and main entry point for the program
+it will take the function that it is decorated with, pass the tuple representation of that function
+to the function passed as macro_modifier, and convert the returned tuples back to a function, and
+return that as the new function which will then be called instead of the original function.
+
+byte_compile(string)
+this function takes a string of python code and returns the bytecode equivalent of the input string.
+note: this function is currently not handling scope very well and will create an entire new scope
+	for each input string, it will be fixed later but for now, please keep this in mind.
+
+byte_compile_obj(string)
+ADD DOCUMENTATION
+note: if you are curious what this is doing, i am struggling to explain it and it's not really
+	useful so don't worry too much.
+
+execute_tups(tups)
+this function takes some bytecode tuples and runs them.
+
+unused_var(tuples)
+this function takes some bytecode tuples and returns the name of a variable as a string that is not
+used in those tuples. this can be used to create a new variable in the code.
+
+todo:
+	- add the lisp equvialents to the functions
+	- make sure it's up to date with the api

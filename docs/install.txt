@@ -1,0 +1,10 @@
+requirements:
+	- I have only tested this on wsl debian but there should be no problems running this on any other os.
+	- you need python3.9 to be installed for this to work, as this library deals with low level details of
+	  the python installation it is very sensitive to different python versions. Although I don't see why
+	  it wouldn't work on previous versions, if you are encountering errors please first check
+	  that you are running on python 3.9.0 (the only version i have currently tested it on).
+	  to check your python version run python3 --version
+
+install:
+python3 -m pip install bytecodemacro

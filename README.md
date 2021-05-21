@@ -2,9 +2,7 @@
 exposes (a slightly modified version of) the bytecode of a function to allow for run-time modification of python syntax.
 
 # how to use
-tbh i am quite busy right now so if you want to try using this library I would advise looking at
-the examples in meta to see how to use the library and just try to figure it out.
-note: as of the current state of documentation i would absolutely not recommended trying this out. But if you come back later I should have added documentation.
+a description of how to use and install the program, please go to the docs folder
 
 # todo
 	- test pip
@@ -19,3 +17,7 @@ note: as of the current state of documentation i would absolutely not recommende
 	- remove all other temporary test files
 	- remove the example files in meta and move them to the documentation for some examples
 	- do something about those long ass import statements
+	- add error / semantics checking for the returned bytecode
+	- add more examples
+		- optimization macros?
+		- steal from examples of lisp macros
