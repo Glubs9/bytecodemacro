@@ -2,3 +2,4 @@ path.sh
 build
 dist
 __pycache__
+.gitignore
