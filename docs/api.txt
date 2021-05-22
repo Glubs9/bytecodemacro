@@ -6,8 +6,7 @@ return that as the new function which will then be called instead of the origina
 
 byte_compile(string)
 this function takes a string of python code and returns the bytecode equivalent of the input string.
-note: this function is currently not handling scope very well and will create an entire new scope
-	for each input string, it will be fixed later but for now, please keep this in mind.
+note: this function is bugged af and I wouldn't recommend using it until it is fixed
 
 byte_compile_obj(string)
 [ADD DOCUMENTATION HERE]

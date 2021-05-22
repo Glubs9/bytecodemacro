@@ -13,8 +13,9 @@ def macro(mac_mod):
 
 #this takes a string and compiles it to cpyasm tups
     #relies on no return statements being sent
+    #only works with single statements
 def byte_compile(string): #need to pass the state inside the funcdtion with like variables and that
-    obj = compile(string, "string", "exec") #here
+    obj = compile(string, "string", "single") #here
     tups = main.main_tups(obj)
     tups = tups[1:-3] #removes define and load_const None return_value end
     return tups

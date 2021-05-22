@@ -5,6 +5,8 @@ requirements:
 	  it wouldn't work on previous versions, if you are encountering errors please first check
 	  that you are running on python 3.9.0 (the only version i have currently tested it on).
 	  to check your python version run python3 --version
+	- make sure you are using cpython, this will only work with cpython. If you are unsure of
+	  what python installation you are using, it is probably cpython.
 
 install:
 python3 -m pip install bytecodemacro
