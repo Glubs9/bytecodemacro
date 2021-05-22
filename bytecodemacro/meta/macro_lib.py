@@ -4,6 +4,8 @@ import bytecodemacro.bytecodecompiler.Runner as runner
 import bytecodemacro.uncompile.main as main
 from types import FunctionType
 
+#this is the main entry point for the api. It's a curried function that takes two functions and uses
+    #the first to modify the seconds bytecode and returns the newly created function from that.
 def macro(mac_mod):
     def ret(f):
         tups = main.main_tups(f.__code__)
@@ -13,7 +15,7 @@ def macro(mac_mod):
         return FunctionType(code, globals())
     return ret
 
-#this takes a string and compiles it to cpyasm tups
+#this takes a string and compiles it to bytecode tuples
     #relies on no return statements being sent
     #only works with single statements
 def byte_compile(string): #need to pass the state inside the funcdtion with like variables and that
@@ -22,20 +24,23 @@ def byte_compile(string): #need to pass the state inside the funcdtion with like
     tups = tups[1:-3] #removes define and load_const None return_value end
     return tups
 
-#for when you have a new definition
+#this function is currently unused and untested
+    #it is the same as byte_compile except it returns the definie and return_value statement
+    #for when you have a new definition created in the string
 def byte_compile_obj(string):
     obj = compile(string, "string", "exec")
     tups = main.main_tups(obj)
     return tups
 
-#only works with one object
+#this function takes some tuples, compiles them and then runs thme
+    #only works with one object
 def execute_tups(tups):
     string = main.tups_to_str(tups)
     code = runner.stirng_to_code(string, one_obj=True)
     exec(code)
 
-#get unused_var name, pass the original functions tuples and the new tuples generated
-    #quite slow but ehhhhhh i really can't be bothered rn
+#this function takes two lists of tuples and returns a new variable name that is unused in both of the lists
+    #quite slow and could be optimized later but this is good enough for now
 def unused_var(old_tups, new_tups, test="v1", am=1):
     for n in old_tups + new_tups:
         if len(n) == 2:
@@ -43,7 +48,5 @@ def unused_var(old_tups, new_tups, test="v1", am=1):
             if arg == test: return unused_var(old_tups, new_tups, "v" + str(am+1), am+1)
     return test
 
-#do something about ret.append() repteaed all the time
-    #maybe use goto?
-
 #maybe add unused jump name
+    #same as unused_var except for jump names

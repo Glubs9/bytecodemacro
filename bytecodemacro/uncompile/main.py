@@ -10,8 +10,8 @@ import sys as sys
 import os as os
 from functools import reduce
 
-#this is done in multiple steps for dbeugging and clarity
-    #takes an object and returns tuples containing each instruction
+#this function takes in a python code object and returns the bytecode tuple representation
+    #this is done in multiple steps for dbeugging and clarity
 def main_tups(obj):
     objs = obj_handler.get_objects(obj)
     dis_strs = [dis_wrapper.get_str(n) for n in objs]
@@ -21,7 +21,9 @@ def main_tups(obj):
     out_tuples = list(reduce(lambda l1,l2: l1+l2, out_tuples))
     return out_tuples #not actually objects but lists of tuples with object information
 
-#although this probably should be in a separate file it was unecersarry and useful to expose
+#this function takes a list of tuples and returns them as a single concatenated string
+    #although this probably should be in a separate file it was unecersarry and useful to expose globally
+    #it could even be moved to bytecodecompile
 def tups_to_str(tuples):
     out = ""
     for v in tuples:
@@ -32,6 +34,7 @@ def tups_to_str(tuples):
     out = out[:-1] #remove extra new line
     return out
 
+#this function should be removed
 def main(): #takes object and returns string of cpyasm file
     fname = sys.argv[1]
     oname, _ = os.path.splitext(fname)
