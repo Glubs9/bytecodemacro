@@ -2,12 +2,24 @@
 exposes (a slightly modified version of) the bytecode of a function to allow for run-time modification of python syntax.
 
 # how to use
-for a description of how to use and install the program, please go to the docs folder
+for a description of how to use and install the program, please go to the docs folder on the github (https://github.com/Glubs9/bytecodemacro).
 
 # cool example to get you excited
 this is a cool example to get you excited with what this library could do and the fun you can have
 doing it.
-[add example plox]
+
+```python
+@macro(cloop)
+def test():
+    _ = "for c = 0;c < 10;c+=1"
+    print(c)
+    _ = "end"
+test()
+#this prints 1 to 10!
+```
+
+isn't this just really cool, please have fun writing your own macros! or just have fun looking at
+the cool examples in docs/examples.py in the github
 
 # todo
 	- allow for uncompile and the compile packages to be used independently on files for other cool stuff (maybe)
