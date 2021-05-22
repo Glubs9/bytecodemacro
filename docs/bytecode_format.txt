@@ -37,6 +37,8 @@ wouldn't recommend it.
 
 
 here is a list of all the instructions:
+note: this is not necersarry to read before getting started, this is more useful as a reference for
+	when you're confused about whan an instruction does. it is quite long.
 note: if an instruction is not written down here, it will most likely not have it's argument modified 
 	from dis and will probably crash the program if encountered.
 note: if an instruction does not have an argument listed, it means it's arguemnt does not matter and
