@@ -1,0 +1,2 @@
+if your wondering where all of the build files and the .gitignore is, I have some stored locally on
+my computer but I have added them all to the .gitignore.
