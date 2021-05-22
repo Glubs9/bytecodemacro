@@ -18,7 +18,7 @@ test()
 #this prints 1 to 10!
 ```
 
-isn't this just really cool, please have fun writing your own macros! or just have fun looking at
+please have fun writing your own macros! or just have fun looking at
 the examples in docs/examples.py in the github
 
 # todo
