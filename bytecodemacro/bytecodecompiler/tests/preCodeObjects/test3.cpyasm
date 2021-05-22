@@ -1,5 +1,0 @@
-label:
-load_name print
-load_const "infinite"
-call_function 1
-jump_absolute label

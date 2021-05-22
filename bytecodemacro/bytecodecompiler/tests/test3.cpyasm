@@ -1,4 +1,0 @@
-define main
-load_const None   
-return_value       
-end
