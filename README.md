@@ -22,6 +22,7 @@ isn't this just really cool, please have fun writing your own macros! or just ha
 the examples in docs/examples.py in the github
 
 # todo
+	- add comments in the code
 	- allow for uncompile and the compile packages to be used independently on files for other cool stuff (maybe)
 	- increase code re-use
 	- clean code of stuff that isn't used from when this was a different project (all the file stuff and header.py and tests)
