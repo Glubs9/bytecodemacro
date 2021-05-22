@@ -23,3 +23,8 @@ doing it.
 		- it doesn't compile in the calling scope so it can lead to some wacky situations (variables not recognized)
 	- test and then handle encountering the extended arg instruction in the uncompile package
 	- test the (end, 0) tuple is not causing any bugs in the bytecodecompile package
+	- i'm not 100% on if compare_op is being uncompiled to the string representation
+	- check that setup_finally handles jumps properly and still doesn't use delta
+	- i am also still lost on closures and co_freevars so if you could get to that it would
+		be helpful
+	- test if the macro decorator works on lambdas

@@ -25,6 +25,15 @@ to define a code object, you write (DEFINE, [object_name]) and to end the defini
 for function arguments to a code object, 
 write directly underneath the definition [("ADD_ARG", [arg_name]), ("ADD_ARG", [second_arg_name]), ...]
 if these add_arg definitions are anywhere except under the DEFINE, it will cause the program to crash.
+if you define multiple code objects in one list (although this shouldn't come up while using the
+		macro decorator and the code for the macro decorator can only handle on object as of now)
+then you should use load_object to get the object into code, rather than load_const or load_name.
+this is due to some f*ckery happening on the side of the cpython internals that I would rather not
+get into due to trauma.
+
+also as a further note, I have not tested or used classes at all anywhere within this bytecode stuff
+cause it doesn't really interst me to do. This means that they might be able to be used but I
+wouldn't recommend it. 
 
 
 here is a list of all the instructions:
@@ -33,6 +42,9 @@ note: if an instruction is not written down here, it will most likely not have i
 note: if an instruction does not have an argument listed, it means it's arguemnt does not matter and
 	will be initialized to 0. (i haven't tested what happens if you change that, i would not
 	recommend it)
+note: just for credit sake, most of the information below is taken directly from the dis package
+	guide page, i did change around a bit of the wording to fit my changes better but I wanted
+	to credit that I did not do most of the work here.
 
 my instructions:
 DEFINE object_name :: will define a new object with the name object_name
@@ -95,444 +107,203 @@ INPLACE_ADD ::  Implements in-place TOS = TOS1 + TOS.
 INPLACE_SUBTRACT :: Implements in-place TOS = TOS1 - TOS.
 INPLACE_LSHIFT :: Implements in-place TOS = TOS1 << TOS.
 INPLACE_RSHIFT :: Implements in-place TOS = TOS1 >> TOS.
+INPLACE_AND :: Implements in-place TOS = TOS1 & TOS.
+INPLACE_XOR :: Implements in-place TOS = TOS1 ^ TOS.
+INPLACE_OR :: Implements in-place TOS = TOS1 | TOS.
+STORE_SUBSCR :: Implements TOS1[TOS] = TOS2.
+DELETE_SUBSCR :: Implements del TOS1[TOS].
 
-INPLACE_AND
-Implements in-place TOS = TOS1 & TOS.
+Coroutine opcodes:
+	I have not tested these out, but they should work
 
-INPLACE_XOR
-Implements in-place TOS = TOS1 ^ TOS.
+GET_AWAITABLE :: Implements TOS = get_awaitable(TOS), where get_awaitable(o) returns o if o is a coroutine
+	object or a generator object with the CO_ITERABLE_COROUTINE flag, or resolves o.__await__.
+GET_AITER :: Implements TOS = TOS.__aiter__().
+GET_ANEXT :: Implements PUSH(get_awaitable(TOS.__anext__())). See GET_AWAITABLE for details about
+	get_awaitable
+END_ASYNC_FOR :: Terminates an async for loop. Handles an exception raised when awaiting a next item. If TOS
+	is StopAsyncIteration pop 7 values from the stack and restore the exception state using the
+	second three of them. Otherwise re-raise the exception using the three values from the
+	stack. An exception handler block is removed from the block stack.
+BEFORE_ASYNC_WITH :: Resolves __aenter__ and __aexit__ from the object on top of the stack. Pushes __aexit__ and
+	result of __aenter__() to the stack.
+SETUP_ASYNC_WITH :: Creates a new frame object.
 
-INPLACE_OR
-Implements in-place TOS = TOS1 | TOS.
+Miscellaneous opcodes:
 
-STORE_SUBSCR
-Implements TOS1[TOS] = TOS2.
-
-DELETE_SUBSCR
-Implements del TOS1[TOS].
-
-Coroutine opcodes
-
-GET_AWAITABLE
-Implements TOS = get_awaitable(TOS), where get_awaitable(o) returns o if o is a coroutine
-object or a generator object with the CO_ITERABLE_COROUTINE flag, or resolves o.__await__.
-
-New in version 3.5.
-
-GET_AITER
-Implements TOS = TOS.__aiter__().
-
-New in version 3.5.
-
-Changed in version 3.7: Returning awaitable objects from __aiter__ is no longer supported.
-
-GET_ANEXT
-Implements PUSH(get_awaitable(TOS.__anext__())). See GET_AWAITABLE for details about
-get_awaitable
-
-New in version 3.5.
-
-END_ASYNC_FOR
-Terminates an async for loop. Handles an exception raised when awaiting a next item. If TOS
-is StopAsyncIteration pop 7 values from the stack and restore the exception state using the
-second three of them. Otherwise re-raise the exception using the three values from the
-stack. An exception handler block is removed from the block stack.
-
-New in version 3.8.
-
-BEFORE_ASYNC_WITH
-Resolves __aenter__ and __aexit__ from the object on top of the stack. Pushes __aexit__ and
-result of __aenter__() to the stack.
-
-New in version 3.5.
-
-SETUP_ASYNC_WITH
-Creates a new frame object.
-
-New in version 3.5.
-
-Miscellaneous opcodes
-
-PRINT_EXPR
-Implements the expression statement for the interactive mode. TOS is removed from the stack
-and printed. In non-interactive mode, an expression statement is terminated with POP_TOP.
-
-SET_ADD(i)
-Calls set.add(TOS1[-i], TOS). Used to implement set comprehensions.
-
-LIST_APPEND(i)
-Calls list.append(TOS1[-i], TOS). Used to implement list comprehensions.
-
-MAP_ADD(i)
-Calls dict.__setitem__(TOS1[-i], TOS1, TOS). Used to implement dict comprehensions.
-
-New in version 3.1.
-
-Changed in version 3.8: Map value is TOS and map key is TOS1. Before, those were reversed.
-
-For all of the SET_ADD, LIST_APPEND and MAP_ADD instructions, while the added value or
-key/value pair is popped off, the container object remains on the stack so that it is
-available for further iterations of the loop.
-
-RETURN_VALUE
-Returns with TOS to the caller of the function.
-
-YIELD_VALUE
-Pops TOS and yields it from a generator.
-
-YIELD_FROM
-Pops TOS and delegates to it as a subiterator from a generator.
-
-New in version 3.3.
-
-SETUP_ANNOTATIONS
-Checks whether __annotations__ is defined in locals(), if not it is set up to an empty dict.
-This opcode is only emitted if a class or module body contains variable annotations
-statically.
-
-New in version 3.6.
-
-IMPORT_STAR
-Loads all symbols not starting with '_' directly from the module TOS to the local namespace.
-The module is popped after loading all names. This opcode implements from module import *.
-
-POP_BLOCK
-Removes one block from the block stack. Per frame, there is a stack of blocks, denoting try
-statements, and such.
-
-POP_EXCEPT
-Removes one block from the block stack. The popped block must be an exception handler block,
-as implicitly created when entering an except handler. In addition to popping extraneous
-values from the frame stack, the last three popped values are used to restore the exception
-state.
-
-RERAISE
-Re-raises the exception currently on top of the stack.
-
-New in version 3.9.
-
-WITH_EXCEPT_START
-Calls the function in position 7 on the stack with the top three items on the stack as
-arguments. Used to implement the call context_manager.__exit__(*exc_info()) when an
-exception has occurred in a with statement.
-
-New in version 3.9.
-
-LOAD_ASSERTION_ERROR
-Pushes AssertionError onto the stack. Used by the assert statement.
-
-New in version 3.9.
-
-LOAD_BUILD_CLASS
-Pushes builtins.__build_class__() onto the stack. It is later called by CALL_FUNCTION to
-construct a class.
-
-SETUP_WITH(delta)
-This opcode performs several operations before a with block starts. First, it loads
-__exit__() from the context manager and pushes it onto the stack for later use by
-WITH_CLEANUP_START. Then, __enter__() is called, and a finally block pointing to delta is
-pushed. Finally, the result of calling the __enter__() method is pushed onto the stack. The
-next opcode will either ignore it (POP_TOP), or store it in (a) variable(s) (STORE_FAST,
+PRINT_EXPR :: Implements the expression statement for the interactive mode. TOS is removed from the stack
+	and printed. In non-interactive mode, an expression statement is terminated with POP_TOP.
+SET_ADD i :: Calls set.add(TOS1[-i], TOS). Used to implement set comprehensions.
+LIST_APPEND i :: Calls list.append(TOS1[-i], TOS). Used to implement list comprehensions.
+MAP_ADD i :: Calls dict.__setitem__(TOS1[-i], TOS1, TOS). Used to implement dict comprehensions.
+RETURN_VALUE :: Returns with TOS to the caller of the function. must be used at the end of every
+	function, even if it returns None
+YIELD_VALUE :: Pops TOS and yields it from a generator.
+YIELD_FROM :: Pops TOS and delegates to it as a subiterator from a generator.
+SETUP_ANNOTATIONS :: Checks whether __annotations__ is defined in locals(), if not it is set up to an empty dict.
+	This opcode is only emitted if a class or module body contains variable annotations statically.
+IMPORT_STAR :: Loads all symbols not starting with '_' directly from the module TOS to the local namespace.
+	The module is popped after loading all names. This opcode implements from module import *.
+POP_BLOCK :: Removes one block from the block stack. Per frame, there is a stack of blocks, denoting try
+	statements, and such.
+POP_EXCEPT :: Removes one block from the block stack. The popped block must be an exception handler block,
+	as implicitly created when entering an except handler. In addition to popping extraneous
+	values from the frame stack, the last three popped values are used to restore the exception
+	state.
+RERAISE :: Re-raises the exception currently on top of the stack.
+WITH_EXCEPT_START :: Calls the function in position 7 on the stack with the top three items on the stack as
+	arguments. Used to implement the call context_manager.__exit__(*exc_info()) when an
+	exception has occurred in a with statement.
+LOAD_ASSERTION_ERROR :: Pushes AssertionError onto the stack. Used by the assert statement.
+LOAD_BUILD_CLASS :: Pushes builtins.__build_class__() onto the stack. It is later called by CALL_FUNCTION to
+	construct a class.
+SETUP_WITH(delta) :: This opcode performs several operations before a with block starts. First, it loads
+		__exit__() from the context manager and pushes it onto the stack for later use by
+		WITH_CLEANUP_START. Then, __enter__() is called, and a finally block pointing to delta is
+		pushed. Finally, the result of calling the __enter__() method is pushed onto the stack. The
+		next opcode will either ignore it (POP_TOP), or store it in (a) variable(s) (STORE_FAST,
 		STORE_NAME, or UNPACK_SEQUENCE).
 
-New in version 3.2.
-
-All of the following opcodes use their arguments.
-
-STORE_NAME(namei)
-Implements name = TOS. namei is the index of name in the attribute co_names of the code
-object. The compiler tries to use STORE_FAST or STORE_GLOBAL if possible.
-
-DELETE_NAME(namei)
-Implements del name, where namei is the index into co_names attribute of the code object.
-
-UNPACK_SEQUENCE(count)
-Unpacks TOS into count individual values, which are put onto the stack right-to-left.
-
-UNPACK_EX(counts)
-Implements assignment with a starred target: Unpacks an iterable in TOS into individual
-values, where the total number of values can be smaller than the number of items in the
-iterable: one of the new values will be a list of all leftover items.
-
-The low byte of counts is the number of values before the list value, the high byte of
-counts the number of values after it. The resulting values are put onto the stack
-right-to-left.
-
-STORE_ATTR(namei)
-Implements TOS.name = TOS1, where namei is the index of name in co_names.
-
-DELETE_ATTR(namei)
-Implements del TOS.name, using namei as index into co_names.
-
-STORE_GLOBAL(namei)
-Works as STORE_NAME, but stores the name as a global.
-
-DELETE_GLOBAL(namei)
-Works as DELETE_NAME, but deletes a global name.
-
-LOAD_CONST(consti)
-Pushes co_consts[consti] onto the stack.
-
-LOAD_NAME(namei)
-Pushes the value associated with co_names[namei] onto the stack.
-
-BUILD_TUPLE(count)
-Creates a tuple consuming count items from the stack, and pushes the resulting tuple onto
-the stack.
-
-BUILD_LIST(count)
-Works as BUILD_TUPLE, but creates a list.
-
-BUILD_SET(count)
-Works as BUILD_TUPLE, but creates a set.
-
-BUILD_MAP(count)
-Pushes a new dictionary object onto the stack. Pops 2 * count items so that the dictionary
-holds count entries: {..., TOS3: TOS2, TOS1: TOS}.
-
-Changed in version 3.5: The dictionary is created from stack items instead of creating an
-empty dictionary pre-sized to hold count items.
-
-BUILD_CONST_KEY_MAP(count)
-The version of BUILD_MAP specialized for constant keys. Pops the top element on the stack
-which contains a tuple of keys, then starting from TOS1, pops count values to form values in
-the built dictionary.
-
-New in version 3.6.
-
-BUILD_STRING(count)
-Concatenates count strings from the stack and pushes the resulting string onto the stack.
-
-New in version 3.6.
-
-LIST_TO_TUPLE
-Pops a list from the stack and pushes a tuple containing the same values.
-
-New in version 3.9.
-
-LIST_EXTEND(i)
-Calls list.extend(TOS1[-i], TOS). Used to build lists.
-
-New in version 3.9.
-
-SET_UPDATE(i)
-Calls set.update(TOS1[-i], TOS). Used to build sets.
-
-New in version 3.9.
-
-DICT_UPDATE(i)
-Calls dict.update(TOS1[-i], TOS). Used to build dicts.
-
-New in version 3.9.
-
-DICT_MERGE
-Like DICT_UPDATE but raises an exception for duplicate keys.
-
-New in version 3.9.
-
-LOAD_ATTR(namei)
-Replaces TOS with getattr(TOS, co_names[namei]).
-
-COMPARE_OP(opname)
-Performs a Boolean operation. The operation name can be found in cmp_op[opname].
-
-IS_OP(invert)
-Performs is comparison, or is not if invert is 1.
-
-New in version 3.9.
-
-CONTAINS_OP(invert)
-Performs in comparison, or not in if invert is 1.
-
-New in version 3.9.
-
-IMPORT_NAME(namei)
-Imports the module co_names[namei]. TOS and TOS1 are popped and provide the fromlist and
-level arguments of __import__(). The module object is pushed onto the stack. The current
-namespace is not affected: for a proper import statement, a subsequent STORE_FAST
-instruction modifies the namespace.
-
-IMPORT_FROM(namei)
-Loads the attribute co_names[namei] from the module found in TOS. The resulting object is
-pushed onto the stack, to be subsequently stored by a STORE_FAST instruction.
-
-JUMP_FORWARD(delta)
-Increments bytecode counter by delta.
-
-POP_JUMP_IF_TRUE(target)
-If TOS is true, sets the bytecode counter to target. TOS is popped.
-
-New in version 3.1.
-
-POP_JUMP_IF_FALSE(target)
-If TOS is false, sets the bytecode counter to target. TOS is popped.
-
-New in version 3.1.
-
-JUMP_IF_NOT_EXC_MATCH(target)
-Tests whether the second value on the stack is an exception matching TOS, and jumps if it is
-not. Pops two values from the stack.
-
-New in version 3.9.
-
-JUMP_IF_TRUE_OR_POP(target)
-If TOS is true, sets the bytecode counter to target and leaves TOS on the stack. Otherwise
-(TOS is false), TOS is popped.
-
-New in version 3.1.
-
-JUMP_IF_FALSE_OR_POP(target)
-If TOS is false, sets the bytecode counter to target and leaves TOS on the stack. Otherwise
-(TOS is true), TOS is popped.
-
-New in version 3.1.
-
-JUMP_ABSOLUTE(target)
-Set bytecode counter to target.
-
-FOR_ITER(delta)
-TOS is an iterator. Call its __next__() method. If this yields a new value, push it on the
-stack (leaving the iterator below it). If the iterator indicates it is exhausted, TOS is
-popped, and the byte code counter is incremented by delta.
-
-LOAD_GLOBAL(namei)
-Loads the global named co_names[namei] onto the stack.
-
-SETUP_FINALLY(delta)
-Pushes a try block from a try-finally or try-except clause onto the block stack. delta
-points to the finally block or the first except block.
-
-LOAD_FAST(var_num)
-Pushes a reference to the local co_varnames[var_num] onto the stack.
-
-STORE_FAST(var_num)
-Stores TOS into the local co_varnames[var_num].
-
-DELETE_FAST(var_num)
-Deletes local co_varnames[var_num].
-
-LOAD_CLOSURE(i)
-Pushes a reference to the cell contained in slot i of the cell and free variable storage.
-The name of the variable is co_cellvars[i] if i is less than the length of co_cellvars.
-Otherwise it is co_freevars[i - len(co_cellvars)].
-
-LOAD_DEREF(i)
-Loads the cell contained in slot i of the cell and free variable storage. Pushes a reference
-to the object the cell contains on the stack.
-
-LOAD_CLASSDEREF(i)
-Much like LOAD_DEREF but first checks the locals dictionary before consulting the cell. This
-is used for loading free variables in class bodies.
-
-New in version 3.4.
-
-STORE_DEREF(i)
-Stores TOS into the cell contained in slot i of the cell and free variable storage.
-
-DELETE_DEREF(i)
-Empties the cell contained in slot i of the cell and free variable storage. Used by the del
-statement.
-
-New in version 3.2.
-
-RAISE_VARARGS(argc)
-Raises an exception using one of the 3 forms of the raise statement, depending on the value
-of argc:
-
-0: raise (re-raise previous exception)
-
-1: raise TOS (raise exception instance or type at TOS)
-
-2: raise TOS1 from TOS (raise exception instance or type at TOS1 with __cause__ set to TOS)
-
-CALL_FUNCTION(argc)
-Calls a callable object with positional arguments. argc indicates the number of positional
-arguments. The top of the stack contains positional arguments, with the right-most argument
-on top. Below the arguments is a callable object to call. CALL_FUNCTION pops all arguments
-and the callable object off the stack, calls the callable object with those arguments, and
-pushes the return value returned by the callable object.
-
-Changed in version 3.6: This opcode is used only for calls with positional arguments.
-
-CALL_FUNCTION_KW(argc)
-Calls a callable object with positional (if any) and keyword arguments. argc indicates the
-total number of positional and keyword arguments. The top element on the stack contains a
-tuple with the names of the keyword arguments, which must be strings. Below that are the
-values for the keyword arguments, in the order corresponding to the tuple. Below that are
-positional arguments, with the right-most parameter on top. Below the arguments is a
-callable object to call. CALL_FUNCTION_KW pops all arguments and the callable object off the
-stack, calls the callable object with those arguments, and pushes the return value returned
-by the callable object.
-
-Changed in version 3.6: Keyword arguments are packed in a tuple instead of a dictionary,
-argc indicates the total number of arguments.
-
-CALL_FUNCTION_EX(flags)
-Calls a callable object with variable set of positional and keyword arguments. If the lowest
-bit of flags is set, the top of the stack contains a mapping object containing additional
-keyword arguments. Before the callable is called, the mapping object and iterable object are
-each “unpacked” and their contents passed in as keyword and positional arguments
-respectively. CALL_FUNCTION_EX pops all arguments and the callable object off the stack,
-calls the callable object with those arguments, and pushes the return value returned by the
-callable object.
-
-New in version 3.6.
-
-LOAD_METHOD(namei)
-Loads a method named co_names[namei] from the TOS object. TOS is popped. This bytecode
-distinguishes two cases: if TOS has a method with the correct name, the bytecode pushes the
-unbound method and TOS. TOS will be used as the first argument (self) by CALL_METHOD when
-calling the unbound method. Otherwise, NULL and the object return by the attribute lookup
-are pushed.
-
-New in version 3.7.
-
-CALL_METHOD(argc)
-Calls a method. argc is the number of positional arguments. Keyword arguments are not
-supported. This opcode is designed to be used with LOAD_METHOD. Positional arguments are on
-top of the stack. Below them, the two items described in LOAD_METHOD are on the stack
-(either self and an unbound method object or NULL and an arbitrary callable). All of them
-are popped and the return value is pushed.
-
-New in version 3.7.
-
-MAKE_FUNCTION(flags)
-Pushes a new function object on the stack. From bottom to top, the consumed stack must
-consist of values if the argument carries a specified flag value
-
-0x01 a tuple of default values for positional-only and positional-or-keyword parameters in
-positional order
-
-0x02 a dictionary of keyword-only parameters’ default values
-
-0x04 an annotation dictionary
-
-0x08 a tuple containing cells for free variables, making a closure
-
-the code associated with the function (at TOS1)
-
-the qualified name of the function (at TOS)
-
-BUILD_SLICE(argc)
-Pushes a slice object on the stack. argc must be 2 or 3. If it is 2, slice(TOS1, TOS) is
-pushed; if it is 3, slice(TOS2, TOS1, TOS) is pushed. See the slice() built-in function for
-more information.
-
-EXTENDED_ARG(ext)
-Prefixes any opcode which has an argument too big to fit into the default one byte. ext
-holds an additional byte which act as higher bits in the argument. For each opcode, at most
-three prefixal EXTENDED_ARG are allowed, forming an argument from two-byte to four-byte.
-
-FORMAT_VALUE(flags)
-Used for implementing formatted literal strings (f-strings). Pops an optional fmt_spec from
-the stack, then a required value. flags is interpreted as follows:
-
-(flags & 0x03) == 0x00: value is formatted as-is.
-
-(flags & 0x03) == 0x01: call str() on value before formatting it.
-
-(flags & 0x03) == 0x02: call repr() on value before formatting it.
-
-(flags & 0x03) == 0x03: call ascii() on value before formatting it.
-
-(flags & 0x04) == 0x04: pop fmt_spec from the stack and use it, else use an empty fmt_spec.
+All of the following opcodes use their arguments:
+
+STORE_NAME name :: Implements name = TOS where name is the string of the variable name. 
+	The compiler tries to use STORE_FAST or STORE_GLOBAL if possible.
+DELETE_NAME name :: Implements del name.
+UNPACK_SEQUENCE count :: Unpacks TOS into count individual values, which are put onto the stack right-to-left.
+UNPACK_EX counts :: Implements assignment with a starred target: Unpacks an iterable in TOS into individual
+		values, where the total number of values can be smaller than the number of items in the
+		iterable: one of the new values will be a list of all leftover items.
+	The low byte of counts is the number of values before the list value, the high byte of
+		counts the number of values after it. The resulting values are put onto the stack
+		right-to-left.
+STORE_ATTR name :: Implements TOS.name = TOS1, where namei is the index of name in co_names.
+DELETE_ATTR name :: Implements del TOS.name.
+STORE_GLOBAL name :: Works as STORE_NAME, but stores the name as a global.
+DELETE_GLOBAL name :: Works as DELETE_NAME, but deletes a global name.
+LOAD_CONST const :: Pushes the constant const onto the stack.
+LOAD_NAME name :: Pushes the name onto the stack.
+BUILD_TUPLE count :: Creates a tuple consuming count items from the stack, and pushes the resulting tuple onto the stack.
+BUILD_LIST count :: Works as BUILD_TUPLE, but creates a list.
+BUILD_SET count :: Works as BUILD_TUPLE, but creates a set.
+BUILD_MAP count :: Pushes a new dictionary object onto the stack. Pops 2 * count items so that the dictionary
+	holds count entries: {..., TOS3: TOS2, TOS1: TOS}.
+BUILD_CONST_KEY_MAP count :: The version of BUILD_MAP specialized for constant keys. Pops the top element on the stack
+	which contains a tuple of keys, then starting from TOS1, pops count values to form values in
+	the built dictionary.
+BUILD_STRING count :: Concatenates count strings from the stack and pushes the resulting string onto the stack.
+LIST_TO_TUPLE :: Pops a list from the stack and pushes a tuple containing the same values.
+	note: idk why this is in the section about the arguments but this is where it is in the
+		official documentation so I am leaving it here
+		I have submitted a bug report and it might get fixed in the future.
+		if you see this message please check the dis documentation and move it if the
+		documentation has moved it.
+LIST_EXTEND i :: Calls list.extend(TOS1[-i], TOS). Used to build lists.
+SET_UPDATE i :: Calls set.update(TOS1[-i], TOS). Used to build sets.
+DICT_UPDATE i :: Calls dict.update(TOS1[-i], TOS). Used to build dicts.
+DICT_MERGE :: Like DICT_UPDATE but raises an exception for duplicate keys.
+	note: this has the exact same problem as list_to_tuple
+LOAD_ATTR name :: Replaces TOS with getattr(TOS, name).
+COMPARE_OP comparison :: Performs a Boolean operation. 
+	the comparison can be any of the following ['<', '<=', '==', '!=', '>', '>=']
+IS_OP invert :: Performs is comparison, or is not if invert is 1.
+CONTAINS_OP invert :: Performs in comparison, or not in if invert is 1.
+IMPORT_NAME name :: Imports the module name. TOS and TOS1 are popped and provide the fromlist and
+	level arguments of __import__(). The module object is pushed onto the stack. The current
+	namespace is not affected: for a proper import statement, a subsequent STORE_FAST
+	instruction modifies the namespace.
+IMPORT_FROM name :: Loads the attribute name from the module found in TOS. The resulting object is
+		pushed onto the stack, to be subsequently stored by a STORE_FAST instruction.
+	note: I have not tested if import_from * works as intended
+JUMP_FORWARD label_name :: jumps to label_name
+POP_JUMP_IF_TRUE label_name :: If TOS is true, jumps to label_name. TOS is popped
+POP_JUMP_IF_FALSE label_name :: If TOS is false, jumps to label_name. TOS is popped.
+JUMP_IF_NOT_EXC_MATCH label_name :: Tests whether the second value on the stack is an exception matching TOS, and jumps if it is
+	not. Pops two values from the stack.
+JUMP_IF_TRUE_OR_POP label_name :: If TOS is true, jumps to label_name and leaves TOS on the stack. Otherwise
+	(TOS is false), TOS is popped.
+JUMP_IF_FALSE_OR_POP label_name :: If TOS is false, jumps to label_name and leaves TOS on the stack. Otherwise
+	(TOS is true), TOS is popped.
+JUMP_ABSOLUTE label_name :: jumps to label_name
+	note: the reason that this an jump_forward both exist is due to the way cpython works, this
+		is functionally the same as jump_forward except it can also jump_backward
+FOR_ITER label_name :: TOS is an iterator. Call its __next__() method. If this yields a new value, push it on the
+	stack (leaving the iterator below it). If the iterator indicates it is exhausted, TOS is
+	popped, and the interpreter jumps to label_name.
+LOAD_GLOBAL name :: Loads the global named name onto the stack.
+SETUP_FINALLY label_name :: Pushes a try block from a try-finally or try-except clause onto the block stack. label_name
+	points to the finally block or the first except block.
+LOAD_FAST name :: Pushes a reference to the local variable name onto the stack.
+STORE_FAST name :: Stores TOS into the local variable name.
+DELETE_FAST name :: Deletes local variable name.
+LOAD_CLOSURE name :: i'm not 100% on what this does but I think it should load a freevariable
+	(variable that is from the closure surrounding the function) named name to the stack.
+	wait it doesn't do this sorry i am very confused.
+LOAD_DEREF name :: this ones definition in official documentation is almost the same as
+	LOAD_CLOSURE. I wouldn't recommend using this until I have figured out what it does, tested
+	it and documented it properly but you're free to try if you want
+LOAD_CLASSDEREF i :: ????????
+STORE_DEREF i :: ????? (sorry for the lack of documentation and understanding as of right now, this
+		is my first major project and I have already done so much research to get to this
+		point and I just want it out in the world for now, I will come back to this and
+		figure it out)
+DELETE_DEREF i :: ??????
+RAISE_VARARGS argc :: Raises an exception using one of the 3 forms of the raise statement, depending on the value of argc:
+	0: raise (re-raise previous exception)
+	1: raise TOS (raise exception instance or type at TOS)
+	2: raise TOS1 from TOS (raise exception instance or type at TOS1 with __cause__ set to TOS)
+CALL_FUNCTION argc :: Calls a callable object with positional arguments. argc indicates the number of positional
+	arguments. The top of the stack contains positional arguments, with the right-most argument
+	on top. Below the arguments is a callable object to call. CALL_FUNCTION pops all arguments
+	and the callable object off the stack, calls the callable object with those arguments, and
+	pushes the return value returned by the callable object.
+CALL_FUNCTION_KW argc :: Calls a callable object with positional (if any) and keyword arguments. argc indicates the
+	total number of positional and keyword arguments. The top element on the stack contains a
+	tuple with the names of the keyword arguments, which must be strings. Below that are the
+	values for the keyword arguments, in the order corresponding to the tuple. Below that are
+	positional arguments, with the right-most parameter on top. Below the arguments is a
+	callable object to call. CALL_FUNCTION_KW pops all arguments and the callable object off the
+	stack, calls the callable object with those arguments, and pushes the return value returned
+	by the callable object.
+CALL_FUNCTION_EX flags :: Calls a callable object with variable set of positional and keyword arguments. If the lowest
+	bit of flags is set, the top of the stack contains a mapping object containing additional
+	keyword arguments. Before the callable is called, the mapping object and iterable object are
+	each “unpacked” and their contents passed in as keyword and positional arguments
+	respectively. CALL_FUNCTION_EX pops all arguments and the callable object off the stack,
+	calls the callable object with those arguments, and pushes the return value returned by the
+	callable object.
+LOAD_METHOD name :: Loads a method named name from the TOS object. TOS is popped. This bytecode
+	distinguishes two cases: if TOS has a method with the correct name, the bytecode pushes the
+	unbound method and TOS. TOS will be used as the first argument (self) by CALL_METHOD when
+	calling the unbound method. Otherwise, NULL and the object return by the attribute lookup
+	are pushed.
+CALL_METHOD argc :: Calls a method. argc is the number of positional arguments. Keyword arguments are not
+	supported. This opcode is designed to be used with LOAD_METHOD. Positional arguments are on
+	top of the stack. Below them, the two items described in LOAD_METHOD are on the stack
+	(either self and an unbound method object or NULL and an arbitrary callable). All of them
+	are popped and the return value is pushed.
+MAKE_FUNCTION flags :: Pushes a new function object on the stack. From bottom to top, the consumed stack must
+		consist of values if the argument carries a specified flag value
+	0x01 a tuple of default values for positional-only and positional-or-keyword parameters in
+		positional order
+	0x02 a dictionary of keyword-only parameters’ default values
+	0x04 an annotation dictionary
+	0x08 a tuple containing cells for free variables, making a closure
+	the code associated with the function (at TOS1)
+	the qualified name of the function (at TOS)
+BUILD_SLICE argc :: Pushes a slice object on the stack. argc must be 2 or 3. If it is 2, slice(TOS1, TOS) is
+	pushed; if it is 3, slice(TOS2, TOS1, TOS) is pushed. See the slice() built-in function for
+	more information.
+EXTENDED_ARG ext ::
+	Prefixes any opcode which has an argument too big to fit into the default one byte. ext
+		holds an additional byte which act as higher bits in the argument. For each opcode, at most
+		three prefixal EXTENDED_ARG are allowed, forming an argument from two-byte to four-byte.
+	note: you shouldn't ever have to use this instruction as the library *should* handle all
+		extended_arg stuff. If you are getting errors like number too big to convert too byte please
+		report the bug
+FORMAT_VALUE flags :: Used for implementing formatted literal strings (f-strings). Pops an optional fmt_spec from
+		the stack, then a required value. flags is interpreted as follows:
+	(flags & 0x03) == 0x00: value is formatted as-is.
+	(flags & 0x03) == 0x01: call str() on value before formatting it.
+	(flags & 0x03) == 0x02: call repr() on value before formatting it.
+	(flags & 0x03) == 0x03: call ascii() on value before formatting it.
+	(flags & 0x04) == 0x04: pop fmt_spec from the stack and use it, else use an empty fmt_spec.
