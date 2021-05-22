@@ -19,7 +19,7 @@ test()
 ```
 
 isn't this just really cool, please have fun writing your own macros! or just have fun looking at
-the cool examples in docs/examples.py in the github
+the examples in docs/examples.py in the github
 
 # todo
 	- allow for uncompile and the compile packages to be used independently on files for other cool stuff (maybe)
