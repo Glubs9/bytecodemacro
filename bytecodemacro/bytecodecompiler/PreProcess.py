@@ -1,3 +1,6 @@
+#this file takes code context in with a string bytecode and converts it to a list of tuples that are
+    #properly formatted with byte arguments as opposed to the previous string arguments
+
 #this is some of the globals that are added to the code object in compilation
 #many of them need to get affected by some of the instructions so I have made them mutable
 #globals

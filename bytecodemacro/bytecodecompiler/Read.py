@@ -1,4 +1,7 @@
-#this might not need it's own file lmao
+#this file describes the wrapper for reading files
+    #it is a relic of when this project was differnet and should be deleted
+
+#this might not need it's own file lmao (this is an old comment)
 
 import csv
 

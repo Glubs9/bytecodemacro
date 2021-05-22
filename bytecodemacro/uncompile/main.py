@@ -1,3 +1,7 @@
+#this file describes the api for the uncompile library
+    #it also contains some unecersarry code (in the main function) from when this was a different
+    #project which should be removed at a later date
+
 import bytecodemacro.uncompile.dis_wrapper as dis_wrapper
 import bytecodemacro.uncompile.parse_dis as parse_dis
 import bytecodemacro.uncompile.pre_process as pre_process

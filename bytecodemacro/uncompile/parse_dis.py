@@ -1,3 +1,7 @@
+#this file takes a string returned by the dis wrapper and parses it into tuples
+    #these tuples are not pre processed and as such are not always only 2 long and also does not
+    #contain information that the objects hold
+
 #given a string return the position of the next whitespace
 def find_next_whitespace(string):
     pos = 0

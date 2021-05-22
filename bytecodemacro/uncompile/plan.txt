@@ -1,5 +1,0 @@
-todo:
-	- remove extra space in functions without args
-	- the error is in load_global
-		- i can't be bothered fixing that right now so i'm just gonna remove all instances
-		of load_global

@@ -1,3 +1,5 @@
+#this file describes the api that the user can access through the bytecode macro library
+
 import bytecodemacro.bytecodecompiler.Runner as runner
 import bytecodemacro.uncompile.main as main
 from types import FunctionType

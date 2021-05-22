@@ -1,7 +1,4 @@
 #this file describes a class that contains all of the code object information
-    #during all stages in compilation.
-    #this is important to keep in mind as self.bytes may contain a bytelist or a long string of
-    #tuples at differnet points in time
 
 import marshal
 from types import CodeType

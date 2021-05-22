@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+#this file describes the api for the bytecodecompile package, which takes a string of bytecode in and returns a code object out
+    #it also contains the main function which is a relic from when this project was different
+
 import marshal
 import sys
 import os

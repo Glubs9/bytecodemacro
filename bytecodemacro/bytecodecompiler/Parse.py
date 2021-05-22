@@ -1,5 +1,6 @@
-#split the line into a series of code objects
-    #entry point labelled as main
+#this file splits the input string into a list of objects,
+    #it also has code for getting the arguments of an object which could be moved to PreProcess but
+    #I am unsure about it
 
 from bytecodemacro.bytecodecompiler.CodeContext import CodeContext
 

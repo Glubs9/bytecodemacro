@@ -1,3 +1,7 @@
+#this file takes a list of tuples (with mnenoic instructions) and converts it to a bytes.
+    #it also contains code to write out a file with a header that is a relic of when this was a
+    #different project
+
 import dis
 import marshal
 import bytecodemacro.bytecodecompiler.Header as Header

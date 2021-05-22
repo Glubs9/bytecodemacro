@@ -1,3 +1,5 @@
+#this file takes the unrefined tuples from parse and returns the tuples properly pre_processed of 2 length tuples
+
 from functools import reduce
 
 def bind(f):

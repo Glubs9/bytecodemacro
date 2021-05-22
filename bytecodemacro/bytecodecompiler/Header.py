@@ -1,4 +1,6 @@
 #the header for the python bytecode, (probably doesn't need to be it's own file)
+    #this file is unecersarry and is a relic from when this was a different project
+        #it should probably be deleted at some later point in time
 
 import importlib.util
 
