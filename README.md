@@ -32,7 +32,6 @@ the examples in docs/examples.py in the github
 	- byte_compile is just soooooo buggy
 		- add handling for newly created variables in byte_compile to use store_fast rather than store_name
 		- it doesn't compile in the calling scope so it can lead to some wacky situations (variables not recognized)
-	- the uncompile is a bit buggy because it doesn't parse corrrectly
 	- test and then handle encountering the extended arg instruction in the uncompile package
 	- test the (end, 0) tuple is not causing any bugs in the bytecodecompile package
 	- i am also still lost on closures and co_freevars so if you could get to that it would

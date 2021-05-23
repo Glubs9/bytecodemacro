@@ -164,3 +164,20 @@ def test(): #should print hello world twice
         print("oops")
 test()
 """
+
+def add(tups):
+    ret = []
+    for n in tups:
+        inst, arg = n
+        if inst == "LOAD_CONST" and len(arg) > 4 and arg[1:4] == "add":
+            ret += byte_compile(arg[5:-1])
+        else:
+            ret.append(n)
+    return ret
+
+@macro(add)
+def test():
+    _ = "add print('hello world')"
+print("\nbefore test")
+test()
+print("after test\n")

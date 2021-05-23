@@ -33,7 +33,7 @@ def split_line(line):
     if "(" not in arg:
         return (inst, arg)
     n = arg.index("(")
-    n2 = arg.index(")") #these are causing errors with strings that have brackets in them
+    n2 = list(reversed(arg)).index(")")-1 #searching from the back of the list just in case the arg is a string with a bracket in it
     arg_val = arg[n+1:n2]
     arg_num = arg[:n-1]
     return (inst, arg_num, arg_val) #might not need to return arg_num but whatever
