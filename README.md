@@ -22,9 +22,6 @@ please have fun writing your own macros! or just have fun looking at
 the examples in docs/examples.py in the github
 
 # todo
-	- there is a bug in examples.py that i'm not sure about (probably something about bytecompile)
-	- allow for uncompile and the compile packages to be used independently on files for other cool stuff (maybe)
-	- increase code re-use
 	- add error / semantics checking for the returned bytecode (maybe)
 	- add more examples
 		- optimization macros?
@@ -33,6 +30,4 @@ the examples in docs/examples.py in the github
 		- add handling for newly created variables in byte_compile to use store_fast rather than store_name
 		- it doesn't compile in the calling scope so it can lead to some wacky situations (variables not recognized)
 	- test and then handle encountering the extended arg instruction in the uncompile package
-	- test the (end, 0) tuple is not causing any bugs in the bytecodecompile package
-	- i am also still lost on closures and co_freevars so if you could get to that it would
-		be helpful
+	- i am also still lost on closures and co_freevars

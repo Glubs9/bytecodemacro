@@ -1,8 +1,9 @@
 #this file takes code context in with a string bytecode and converts it to a list of tuples that are
     #properly formatted with byte arguments as opposed to the previous string arguments
 
-from functools import reduce, partial
+from functools import partial
 from bytecodemacro.bytecodecompiler.CodeContext import CodeContext
+from bytecodemacro.common.functional import bind, compose
 
 #this function takes in a code object and a list of all the code objects and returns the same code
 #object with a processed bytecode and attributes that match (like the consts array holds constants).
@@ -23,19 +24,6 @@ def PreProcess(code_context_in, all_objects):
 
     compare_list = ('<', '<=', '==', '!=', '>', '>=') 
     label_positions = {}
-
-    #used to compose the pre-processing functions together
-        #compose and bind are both used in both pre_processing here and uncompile and should be
-        #moved somewhere else to increase code reuse
-    def compose_list(f_list):
-        def ret(arg):
-            return reduce(lambda a,n: n(a), f_list, arg)
-        return ret
-
-    #equivalent to the list monads bind operator. any attempt to explain this will end up just
-    #re-writing the code in comment form, please try to understand this be reading it yourself
-    def bind(f, li): #f is a function that takes an element from li and reutrns a list
-        return list(reduce(lambda a1,a2: a1+a2, map(f, li))) #the + in here is list concatenation
 
     #this function takes a line and returns a boolean if it should be removed from the bytecode
     def should_remove(line): #called in the filter function
@@ -181,22 +169,22 @@ def PreProcess(code_context_in, all_objects):
             #knew other people were going to see this), it is probably worth changing as it's not the most readable
         #the order of the functions here is not completely arbitrary and any changes to this order
             #must be properly thought out
-    pre_process = compose_list([
+    pre_process = compose(
         partial(filter, should_remove),
         find_labels, #this can't be in the map cause it needs to have index information
-        partial(map, compose_list([
+        partial(map, compose(
             clean_args,
             add_arg, 
             lambda n: (n[0].upper(), n[1]), #makes the instructions uppercase (has to be a lambda cause .upper is a method (ruins my pointfree >:(
             handle_literals,
             handle_jump_absolute_literals
-        ])), #composes all the preproccessing that only needs a single line and not the context of other lines
+        )), #composes all the preproccessing that only needs a single line and not the context of other lines
         partial(bind, handle_load_object),
         handle_jump_relative_literals,
         partial(map, lambda n: (n[0], int(n[1]))),
         handle_extended_args,
         list #list might not be necersarry, but it's better safe than sorry in future updates
-    ])
+    )
 
     #this section of the code modifies all of the attributes of the code_context to their properly pre_processed version
     code_context_in.bytes = pre_process(code_context_in.bytes)

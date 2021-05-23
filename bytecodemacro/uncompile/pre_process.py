@@ -1,21 +1,8 @@
 #this file takes the unrefined tuples from parse and returns the tuples properly pre_processed of 2 length tuples
     #the entry point for this file is the function pre_proccess (at the bottom of the file)
 
-from functools import reduce
-
-#this function is an extremely useful utility function that is equivalent to the bind operation on a list monad
-    #here is the type signature for this function (a -> [b]) -> [a] -> [b] (in haskell syntax)
-    #any attempt to explain what this does will just explain the code directly so I will just hope that you can read it
-def bind(f): #f takes an item from the list and returns an array
-    def ret(li):
-        return reduce(lambda n1,n2: n1+n2, map(f, li)) #reduce concatenates the arrays together
-    return ret
-
-#compose takes an inp and a series of functions, it then calls the functions as such: f1(f2(...fn(inp)))
-def compose(inp, *fs):
-    for n in fs:
-        inp = n(inp)
-    return inp
+from functools import reduce, partial
+from bytecodemacro.common.functional import compose, bind
 
 #this function tests if an instruciton loads a code object
 test_str = "<code object " #not the most rigorous check but I think it will work for now
@@ -96,11 +83,11 @@ def trace(msg):
 #structured verison of those bytecode. 
     #note: this function does not handle the object structure (define, add_arg, end) which is handled in obj_handler.py
 def pre_process(instructions):
-    return compose(instructions, #if we changed compose to be curried this function could be pointfree but that would be less readable and less pythonic
-        bind(remove_empty),
-        bind(handle_third_arg),
-        lambda n: map(handle_strings, n), #if only map was curried :(
-        lambda n: map(remove_globals, n), #this is just cause i'm too lazy to handle globals ec dee (this is an old comment and might not be true on the current build)
+    return compose(
+        partial(bind, remove_empty),
+        partial(bind, handle_third_arg),
+        partial(map, handle_strings), 
+        partial(map, remove_globals), 
         list, #this is because map does not reutrn a list but an iterable but handle_jumps requires a list
         handle_jumps
-    )
+    )(instructions)
