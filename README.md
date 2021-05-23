@@ -35,7 +35,5 @@ the examples in docs/examples.py in the github
 	- the uncompile is a bit buggy because it doesn't parse corrrectly
 	- test and then handle encountering the extended arg instruction in the uncompile package
 	- test the (end, 0) tuple is not causing any bugs in the bytecodecompile package
-	- check that setup_finally handles jumps properly and still doesn't use delta
 	- i am also still lost on closures and co_freevars so if you could get to that it would
 		be helpful
-	- test if the macro decorator works on lambdas
