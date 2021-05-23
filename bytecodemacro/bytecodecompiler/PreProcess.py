@@ -1,58 +1,50 @@
 #this file takes code context in with a string bytecode and converts it to a list of tuples that are
     #properly formatted with byte arguments as opposed to the previous string arguments
 
-#this is some of the globals that are added to the code object in compilation
-#many of them need to get affected by some of the instructions so I have made them mutable
-#globals
-    #THIS IS UGLY CODE AND IF I COULD THINK OF A CLEANER WAY TO DO THIS I WOULD BE THIS IS THE
-    #ONLY WAY I CAN REALLY THINK OF THAT IS CLEAR AND OBVIOUS
-        #woops caps lock
-        #i could do this with my own code object and messing wit hthat but that would maybe be better code?
-        #NOTE: potentially change this to be using a struct to store data rather than globals
-
-#this file is only as long as it is cause of my ranting comments
-
 from functools import reduce, partial
 from bytecodemacro.bytecodecompiler.CodeContext import CodeContext
 
-#the public preprocessing to be called
-    #i'm not sure if chucking everything into a function like this is good or bad practice but i'm
-    #doing it to keep my algorithm nice and clean
-#this function could also be conceptualized as compiling an intermediary language (which is closer
-            #to the output of dis)
+#this function takes in a code object and a list of all the code objects and returns the same code
+#object with a processed bytecode and attributes that match (like the consts array holds constants).
+    #the reason it is a massive closure is because due to the nature of the bytecode, writing this
+    #with state makes more sense and as this function can be called multiple times it's better to
+    #keep the state in the function so that it is remade and not kept the same between objects
+    #although this function is quite ugly as far as coding goes, especially with all that state.
+    #hopefully there is a better way to do this but I can't think of one without seriously downsides
 def PreProcess(code_context_in, all_objects):
 
     #the naming schema is a bit weird with these lists but it is to keep it consistent with the
     #documentations (in the dis library) names
-    constants = [] #list of literals used in the program (i would use a set for faster seraching but the instructions rely on the index of the literal so i have to 
+    constants = [] #list of literals used in the program (i would use a set for faster seraching but the instructions rely on the index of the literal so i have to)
     names = [] #list of names used in the program (same logic about sets as above)
-    varnames = code_context_in.varnames #( the arguments already exist as varnames)
-    global_list = [] #not called globals cause its reserved (also not sure it's necersarry, i'm a bit confused about store_global
-    cellvars = [] #not sure what this is
+    varnames = code_context_in.varnames #(the arguments already exist as varnames)
+    global_list = [] #although in documentation this is globals but I can't name it that due to globals being reserved
+    cellvars = [] #not sure what this is (this is the freevars storage but i'm not sure how to do this)
 
-    #below this line is globals that aren't returned but just used in preprocessing
     compare_list = ('<', '<=', '==', '!=', '>', '>=') 
     label_positions = {}
 
     #used to compose the pre-processing functions together
+        #compose and bind are both used in both pre_processing here and uncompile and should be
+        #moved somewhere else to increase code reuse
     def compose_list(f_list):
         def ret(arg):
-            #probably a better way to do this (like a fold probaly?)
             return reduce(lambda a,n: n(a), f_list, arg)
         return ret
 
-    def bind(f, li):
-        return list(reduce(lambda a1,a2: a1+a2, map(f, li))) #not fast but it's elegant
+    #equivalent to the list monads bind operator. any attempt to explain this will end up just
+    #re-writing the code in comment form, please try to understand this be reading it yourself
+    def bind(f, li): #f is a function that takes an element from li and reutrns a list
+        return list(reduce(lambda a1,a2: a1+a2, map(f, li))) #the + in here is list concatenation
 
+    #this function takes a line and returns a boolean if it should be removed from the bytecode
     def should_remove(line): #called in the filter function
-        if len(line) == 0: return False #this is already done in parse but i've kept it here just in
-                                        #case i delete it
-        if line[0][0] == "#": return False
-        return True
+        if len(line) == 0: return False #this is already done in parse but i've kept it here just in case i delete it there
+        elif line[0][0] == "#": return False #manual comments in the code, note: this could be deleted
+        else: return True
 
-    def find_labels(lines):
-        #not a massive fan of this function but it works
-            #i could do something with 
+    #this function finds all of the labels, changes them to nop and adds there positions to label_positions
+    def find_labels(lines): #not a massive fan of this function but it works
         ret = []
         for i, v in enumerate(lines):
             if len(v) == 2 and v[0] == "LABEL":
@@ -62,19 +54,25 @@ def PreProcess(code_context_in, all_objects):
             ret+=[v]
         return ret
 
-    #removes any empty arguments
+    #removes any empty arguments in a tuple
     def clean_args(val):
         if len(val) == 1: return val
         if val[1] == '':  return [val[0]]
         else:             return val[:2]
 
     #for instrucitons that don't have arguments (like pop_top or return_value)
+        #note: this is not likely to occur in the context of a macro
     def add_arg(val):
         if len(val) == 1: 
             return val + [0]
         return val
 
-    def memoize_loading(lis, arg): #note: memoize loading is called sometimes with things that should not be added to 
+    #when an instruction is called that its argument is an index to a list attribute in the original
+    #bytecode, this function is used to add that argument to the attribute in the new bytecode when
+    #we are generating it, this also prevents the same argument from getting added to the bytecode
+    #attributes more than once
+    #e.g: load_const "hello world" will add hello world to the constants array and return load_const 1
+    def memoize_loading(lis, arg): #note: memoize loading is called sometimes with things that should not be added to (what does this mean?)
         try: 
             arg = int(arg)
         except ValueError:
@@ -82,8 +80,8 @@ def PreProcess(code_context_in, all_objects):
                 arg = float(arg)
             except ValueError: pass
         finally:
-            if arg in lis: arg = lis.index(arg) #double check later
-            else: lis.append(arg); arg = len(lis)-1 #maybe remove semi colon
+            if arg in lis: arg = lis.index(arg) #double check later, also very slow
+            else: lis.append(arg); arg = len(lis)-1 #maybe remove semi colon but I like how this looks
             return (lis, arg)
 
     #commands to lists is used in handle_literals
@@ -96,37 +94,42 @@ def PreProcess(code_context_in, all_objects):
             "STORE_ATTR": names, "STORE_GLOBAL": global_list, "STORE_DEREF": cellvars,
             "DELETE_NAME": names, "DELETE_ATTR": names, "DELETE_GLOBAL": global_list,
             "IMPORT_NAME": names, "IMPORT_FROM": names, "COMPARE_OP": compare_list}
+    #this function will take an instructino and if it contains an instruction that would normally
+    #index into an attribute of an array in the original bytecode, it calls memoize_loading to handle it
     def handle_literals(val):
         inst, arg = val
-        if inst in commands_to_lists: #might have to nonlocal the commands_to_lists
+        if inst in commands_to_lists:
             lis = commands_to_lists[inst]
             lis, arg = memoize_loading(lis, arg)
         return (inst, arg)
 
-    #references a dictionary not a list so it has to be done like this
-    #i have to handle jump_relatives (e.g: jump_forward) in a different function
+    #this function takes a line and if it is a jump absolute literal (with an absolute position in the
+    #byetcode), and converts the second argument into the correct position in the code rather than the label
+        #references a dictionary not a list so it has to be done like this (what does this mean?)
     def handle_jump_absolute_literals(line):
         inst, arg = line
         if inst in {"POP_JUMP_IF_TRUE", "POP_JUMP_IF_FALSE", "JUMP_IF_NOT_EXC_MATCH", "JUMP_IF_TRUE_OR_POP", "JUMP_IF_FALSE_OR_POP", "JUMP_ABSOLUTE"}:
             arg = label_positions[arg]
         return (inst, arg)
 
+    #obj_dict is useful in handle_load_object
     obj_dict = {o[0].name: o for o in all_objects}
-    def handle_load_object(line):
-        nonlocal constants
+    #this function handle the custom instruciton load_object
+    #it takes a line in and if that line is load_object it will load the constant object in
+        #this function is not too useful in a macro, so it might have to be deleted in a later version
+    def handle_load_object(line): nonlocal constants
         inst, arg = line
         if inst == "LOAD_OBJECT":
-            inst = "LOAD_CONST"
+            inst = "LOAD_CONST" #how this works is it first loads the object as a constant, but this
+                                #object is in a one long array, as to emulate pointer behaviour in python to allow for recursive objects
+                                #it also makes compilation of the objects a lot easier
             constants, arg = memoize_loading(constants, obj_dict[arg])
-            inst2 = "LOAD_CONST"
+            inst2 = "LOAD_CONST" #it then loads 0 onto the stack
             constants, arg2 = memoize_loading(constants, 0) #i should be calling handle_literals instead of this, but tbh at this point i just don't care
-            #the reason we have objects stored in a list and then subscripted is too emulate pointer
-            #behaviour for later on so we can have cyclic references and the like, if you want a
-            #more detailed explanation, give us an email: jonte.fry@gmail.com
-            return [(inst, arg), (inst2, arg2), ("BINARY_SUBSCR",0)]
-        else:
-            return [(inst, arg)]
+            return [(inst, arg), (inst2, arg2), ("BINARY_SUBSCR",0)] #it then subscripts into the one length array to extract the python code object onto the stack
+        return [(inst, arg)]
 
+    #this function handles jumps statements that their arguments are relative jumps
     def handle_jump_relative_literals(lines):
         ret = []
         for i, v in enumerate(lines):
@@ -136,29 +139,30 @@ def PreProcess(code_context_in, all_objects):
             ret += [(inst, arg)]
         return ret
 
-    #used in debugging (delete it later)
-    def trace(v): #can't put in lambda cause one line
+    #used in debugging 
+    def trace(v):
         print(v)
         return v
 
+    #sometimes instructions need to be added after the labels positions have been defined in the
+    #label position object so this function updates those labels to be in the correct spot
     def increment_labels_below(index, n):
-        #sometimes insturctions need to be added after labels defined so they need to be updates
         nonlocal label_positions
         label_positions = {key: val if val < index else val + n*2 for key, val in label_positions.items()} #n * 2 as instructions are 2 bytes long
 
-    #terrible name for a function
-        #it's too early too think of anything good though
-    def extended_args_instructions(n):
+    #this function checks to see if any argument in the tuple is above 255 and if it is it adds
+    #extended arg instructions to ensure that the arguments are always byte sized
+        #terrible name for a function
+    def extended_args_instructions(n): #i like this functions implementation :)
         if n < 256: return [("EXTENDED_ARG", n)]
         if n > 255: 
             tmp = ("EXTENDED_ARG", n % 256)
             return [tmp] + extended_args_instructions(n >> 8)
 
-    #sometimes the arguments to an instruction become bigger then 255 (a byte) (particularly in jump
-    #commands) so i have to add a thing to auto generate the extended args
-        #i'm not a massive fan of this function, too much maths and i'm relying on calling the
-        #funciton to execute some of the logic rather than the function wholeheartedly
-        #i need to change this later
+    #this function takes in the byte tuples and if any argument is above byte sized, it adds
+    #extended args instructions to the bytecode.
+        #this function does none of the maths but it calls the extended_args_instruction function
+        #which handles all of the hard work
     def handle_extended_args(lines):
         ret = []
         for i, v in enumerate(lines):
@@ -168,11 +172,14 @@ def PreProcess(code_context_in, all_objects):
                 increment_labels_below(i, len(e))
                 arg = arg % 256
                 ret += e
-            ret += [(inst, arg)]
+            ret.append((inst, arg))
         return ret
 
-    #maybe not the cleanest to do it like this but it's more fun like this
-        #the order of the functions here is not completely arbitrary but i can't be botehred figuring out the best way to do it
+    #this creates a function pre_process that pre_processes a bytecode tuple
+        #maybe not the cleanest to do it like this but it's more fun like this (i made this before I
+            #knew other people were going to see this), it is probably worth changing as it's not the most readable
+        #the order of the functions here is not completely arbitrary and any changes to this order
+            #must be properly thought out
     pre_process = compose_list([
         partial(filter, should_remove),
         find_labels, #this can't be in the map cause it needs to have index information
@@ -190,7 +197,7 @@ def PreProcess(code_context_in, all_objects):
         list #list might not be necersarry, but it's better safe than sorry in future updates
     ])
 
-    #look what you have done to me oo
+    #this section of the code modifies all of the attributes of the code_context to their properly pre_processed version
     code_context_in.bytes = pre_process(code_context_in.bytes)
     code_context_in.constants = constants
     code_context_in.names = names

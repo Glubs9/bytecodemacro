@@ -37,6 +37,8 @@ class CodeContext:
         self.cellvars = [] if "cellvars" not in kwargs else kwargs["cellvars"]
         #self.args = [] if "args" not in kwargs else kwargs["args"]
 
+    #this function converts this object to a read python code object
+        #todo: re-write documentation with information from the help command (which I only just discovered)
     def MakePyObj(self): #should be called after object is generated from PreProcess.py
         codestring = Compile(self.bytes)
         return CodeType(
@@ -44,7 +46,7 @@ class CodeContext:
                 0, #kwarg count
                 0, #still have no clue what this is or how i figured this out
                 len(self.varnames), #might not be right
-                50000, #note: can't figure this out cause halting problem
+                50000, #note: can't figure this out cause halting problem (maybe, check later)
                 0, #flags for the compiler, (i will need to take a double check at this later)
                 codestring,
                 tuple(self.constants),

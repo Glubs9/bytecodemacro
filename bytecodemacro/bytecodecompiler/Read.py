@@ -5,11 +5,14 @@
 
 import csv
 
-#i don't think this has been called
+#reads a string from a file, calls read_str on it and returns it
 def read(fname):
     return read_str(open(fname, "r").read())
 
-#no need for a lexer as the csvreader does it automatically
+#this function takes a string and splits it into each instruction and its arguemnts
+    #this is done by making use of csv reader which does this automatically
+    #it could be debated if this should be moved into parse, but in my opinion this is more of a
+    #lexer than a parser but having an entire file just for this function is a bit unecersarry
 def read_str(string):
     tmp = [n for n in csv.reader(string.split("\n"), delimiter=" ")]
     return tmp

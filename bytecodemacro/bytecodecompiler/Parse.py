@@ -7,7 +7,6 @@ from bytecodemacro.bytecodecompiler.CodeContext import CodeContext
 def split(lines):
     """ 
     split splits the files into a series of lines for each object
-    (how to handle the args in)
     (this takes already lexed information from the csv reader)
     """
     curr_obj = None #gets defined as a CodeContext
@@ -26,9 +25,9 @@ def split(lines):
             curr_obj.bytes += [n]
     return all_objs
 
-#this should be in PreProcess but i put it in here because ?? (i mean it is small and elegant and i don't want to look at PreProccess rn tbh)
-    #this takes an object, adds the arguments to the object, then returns it
-    #*technically* this does do side effects but i will use it like it does not.
+#this takes an object, adds the arguments to the object, then returns it
+    #this should be in PreProcess but i put it in here because ?? (i mean it is small and elegant and i don't want to look at PreProccess rn tbh)
+    #note: although this function does change an object, which is passed by reference, please make use of this function as if it passed objects by value
 def get_args(obj):
     tups = obj.bytes
     n = 0
