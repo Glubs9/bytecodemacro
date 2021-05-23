@@ -25,18 +25,16 @@ the examples in docs/examples.py in the github
 	- there is a bug in examples.py that i'm not sure about (probably something about bytecompile)
 	- allow for uncompile and the compile packages to be used independently on files for other cool stuff (maybe)
 	- increase code re-use
-	- clean code of stuff that isn't used from when this was a different project (all the file stuff and header.py and tests)
 	- add error / semantics checking for the returned bytecode (maybe)
 	- add more examples
 		- optimization macros?
 		- steal from examples of lisp macros
 	- byte_compile is just soooooo buggy
-		- brackets in strings that are bytecompiled don't work for some reason
 		- add handling for newly created variables in byte_compile to use store_fast rather than store_name
 		- it doesn't compile in the calling scope so it can lead to some wacky situations (variables not recognized)
+	- the uncompile is a bit buggy because it doesn't parse corrrectly
 	- test and then handle encountering the extended arg instruction in the uncompile package
 	- test the (end, 0) tuple is not causing any bugs in the bytecodecompile package
-	- i'm not 100% on if compare_op is being uncompiled to the string representation
 	- check that setup_finally handles jumps properly and still doesn't use delta
 	- i am also still lost on closures and co_freevars so if you could get to that it would
 		be helpful
