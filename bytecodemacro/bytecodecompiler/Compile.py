@@ -3,7 +3,6 @@
     #different project
 
 import dis
-import marshal
 import bytecodemacro.bytecodecompiler.Header as Header
 
 #compiles out a byte string into a bytes
@@ -12,9 +11,3 @@ def Compile(BytesStr):
     for n in BytesStr:
         ret += [dis.opmap[n[0]], n[1]]
     return bytes(ret)
-
-#writes a code object out to a pyc file
-def Out(fname, obj):
-    fout = open(fname, "wb+")
-    fout.write(Header.Header())
-    marshal.dump(obj, fout)

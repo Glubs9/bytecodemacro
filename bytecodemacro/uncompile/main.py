@@ -6,8 +6,6 @@ import bytecodemacro.uncompile.dis_wrapper as dis_wrapper
 import bytecodemacro.uncompile.parse_dis as parse_dis
 import bytecodemacro.uncompile.pre_process as pre_process
 import bytecodemacro.uncompile.obj_handler as obj_handler
-import sys as sys
-import os as os
 from functools import reduce
 
 #this function takes in a python code object and returns the bytecode tuple representation
@@ -33,17 +31,3 @@ def tups_to_str(tuples):
         out += "\n"
     out = out[:-1] #remove extra new line
     return out
-
-#this function should be removed
-def main(): #takes object and returns string of cpyasm file
-    fname = sys.argv[1]
-    oname, _ = os.path.splitext(fname)
-    oname += ".cpyasm"
-
-    fc = open(fname, "r").read()
-    obj = compile(fc, fname, "exec")
-
-    tups = main_tups(obj)
-    out_str = tups_to_str(tups)
-
-    open(oname, "w").write(out_str)

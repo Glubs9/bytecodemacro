@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 #this file describes the api for the bytecodecompile package, which takes a string of bytecode in and returns a code object out
     #it also contains the main function which is a relic from when this project was different
 
@@ -26,11 +24,3 @@ def string_to_code(string, one_obj=False):
         return n[0]
     else:
         return next(n[0] for n in all_objs if n[0].co_name.upper() == "MAIN") #gets the object named main and returns it
-
-#takes a file from sys.argv, compiles it and outputs a pyc file
-    #should be deleted later on
-def main():
-    fname = sys.argv[1]
-    oname, _ = os.path.splitext(fname)
-    oname += ".pyc"
-    Compile.Out(oname, string_to_code(open(fname, "r").read()))
