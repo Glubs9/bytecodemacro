@@ -117,7 +117,8 @@ def PreProcess(code_context_in, all_objects):
     #this function handle the custom instruciton load_object
     #it takes a line in and if that line is load_object it will load the constant object in
         #this function is not too useful in a macro, so it might have to be deleted in a later version
-    def handle_load_object(line): nonlocal constants
+    def handle_load_object(line): 
+        nonlocal constants
         inst, arg = line
         if inst == "LOAD_OBJECT":
             inst = "LOAD_CONST" #how this works is it first loads the object as a constant, but this

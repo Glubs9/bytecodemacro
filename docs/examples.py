@@ -5,11 +5,11 @@ def macro_trace(tups):
     for n in tups: print(n)
     return tups
 
+print("\nbefore macro trace")
 @macro(macro_trace)
 def test(a):
     print("a passed as " + str(a))
     return a
-print("\nbefore macro trace")
 print(test(3))
 print("after macro trace\n")
 
@@ -129,6 +129,9 @@ test(10)
 print("after cloop\n")
 
 
+"""
+#doesn't work right now, probably a bug or something
+
 def walrus(tups):
     ret = []
     for n in tups:
@@ -160,3 +163,4 @@ def test(): #should print hello world twice
     else:
         print("oops")
 test()
+"""

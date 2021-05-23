@@ -3,7 +3,6 @@
     #different project
 
 import dis
-import bytecodemacro.bytecodecompiler.Header as Header
 
 #compiles out a byte string into a bytes
 def Compile(BytesStr):

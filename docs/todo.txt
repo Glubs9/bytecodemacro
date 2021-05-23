@@ -1,4 +1,0 @@
-todo:
-	- write documentation for the cpyasm format
-	- add comments
-	- describe the flow of data through the packages
