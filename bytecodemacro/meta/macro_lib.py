@@ -11,7 +11,7 @@ def macro(mac_mod):
         tups = main.main_tups(f.__code__)
         new_func = mac_mod(tups)
         code = runner.string_to_code(new_func, one_obj=True)
-        return FunctionType(code, globals())
+        return FunctionType(code, f.__globals__) #should fix bug with failed scopes
     return ret
 
 #this takes a string and compiles it to bytecode tuples
