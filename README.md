@@ -21,6 +21,13 @@ test()
 please have fun writing your own macros! or just have fun looking at
 the examples in docs/examples.py in the github
 
+# basic installation
+please read through install.txt for requirements but if you just want to get it installed before
+looking through the library the comamnd is.  
+```
+python3 -m pip install bytecodemacro
+```
+
 # todo
 	- add error / semantics checking for the returned bytecode (maybe)
 	- add more examples
