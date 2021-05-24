@@ -33,6 +33,9 @@ python3 -m pip install bytecodemacro
 	- add more examples
 		- optimization macros?
 		- steal from examples of lisp macros
+	- order examples.py by ease of understanding
+		- so the easy ones to read like constant and add_arg are at the top but the ones
+			that are harder like cloop or join are at the bottom
 	- byte_compile is just soooooo buggy
 		- add handling for newly created variables in byte_compile to use store_fast rather than store_name
 		- byte compoile is not ahndling scope or something

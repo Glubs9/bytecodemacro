@@ -131,7 +131,6 @@ print("after cloop\n")
 
 """
 #doesn't work right now, probably a bug or something
-
 def walrus(tups):
     ret = []
     for n in tups:
@@ -164,6 +163,7 @@ def test(): #should print hello world twice
         print("oops")
 test()
 """
+
 
 def add(tups):
     ret = []
