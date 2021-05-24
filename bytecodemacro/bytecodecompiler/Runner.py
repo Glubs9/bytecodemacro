@@ -1,5 +1,4 @@
 #this file describes the api for the bytecodecompile package, which takes a string of bytecode in and returns a code object out
-    #it also contains the main function which is a relic from when this project was different
 
 import marshal
 import sys
@@ -12,10 +11,9 @@ import bytecodemacro.bytecodecompiler.PreProcess as PreProcess
 import bytecodemacro.bytecodecompiler.CodeContext as CodeContext
 import bytecodemacro.bytecodecompiler.Compile as Compile
 
-#this function takes a string of the modified bytecode and converts it to a python code object and
-def string_to_code(string, one_obj=False):
-    read = Read.read_str(string)
-    all_objs = [[Parse.get_args(n)] for n in Parse.split(read)] #objects are mapped to array so that we can use the pass by reference nature of the array to handle objects referencing other objects
+#this function takes a list of the modified bytecode and converts it to a python code object and returns it
+def string_to_code(tuples, one_obj=False):
+    all_objs = [[Parse.get_args(n)] for n in Parse.split(tuples)] #objects are mapped to array so that we can use the pass by reference nature of the array to handle objects referencing other objects
     [PreProcess.PreProcess(n[0], all_objs) for n in all_objs] 
     for n in all_objs:
         n[0] = n[0].MakePyObj()

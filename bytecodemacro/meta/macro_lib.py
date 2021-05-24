@@ -10,8 +10,7 @@ def macro(mac_mod):
     def ret(f):
         tups = main.main_tups(f.__code__)
         new_func = mac_mod(tups)
-        string = main.tups_to_str(new_func)
-        code = runner.string_to_code(string, one_obj=True)
+        code = runner.string_to_code(new_func, one_obj=True)
         return FunctionType(code, globals())
     return ret
 

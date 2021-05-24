@@ -18,16 +18,3 @@ def main_tups(obj):
     out_tuples = [obj_handler.add_definitions(objs[n], pre_processed[n]) for n in range(len(pre_processed))]
     out_tuples = list(reduce(lambda l1,l2: l1+l2, out_tuples))
     return out_tuples #not actually objects but lists of tuples with object information
-
-#this function takes a list of tuples and returns them as a single concatenated string
-    #although this probably should be in a separate file it was unecersarry and useful to expose globally
-    #it could even be moved to bytecodecompile
-def tups_to_str(tuples):
-    out = ""
-    for v in tuples:
-        for i in v:
-            out += i + " "
-        out = out[:-1] #remove the extra space
-        out += "\n"
-    out = out[:-1] #remove extra new line
-    return out
