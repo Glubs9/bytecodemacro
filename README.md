@@ -35,6 +35,5 @@ python3 -m pip install bytecodemacro
 		- steal from examples of lisp macros
 	- byte_compile is just soooooo buggy
 		- add handling for newly created variables in byte_compile to use store_fast rather than store_name
-		- it doesn't compile in the calling scope so it can lead to some wacky situations (variables not recognized)
 	- test and then handle encountering the extended arg instruction in the uncompile package
 	- i am also still lost on closures and co_freevars
