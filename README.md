@@ -31,3 +31,4 @@ the examples in docs/examples.py in the github
 		- it doesn't compile in the calling scope so it can lead to some wacky situations (variables not recognized)
 	- test and then handle encountering the extended arg instruction in the uncompile package
 	- i am also still lost on closures and co_freevars
+	- change the input to bytecodecomile to not be a string but a list of tuples
