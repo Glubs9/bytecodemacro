@@ -9,13 +9,28 @@ this is a cool example to get you excited with what this library could do and th
 doing it.
 
 ```python
-@macro(cloop)
-def test():
-    _ = "for c = 0;c < 10;c+=1"
-    print(c)
-    _ = "end"
-test()
-#this prints 1 to 10!
+def goto(tups):
+    ret = []
+    for n in tups:
+        inst, arg = n
+        if inst == "LOAD_CONST" and len(arg) > 6 and arg[1:5] == "goto":
+            ret.append(("JUMP_ABSOLUTE", arg[6:-1]))
+        elif inst == "LOAD_CONST" and len(arg) > 2 and arg[-2] == ":":
+            ret.append(("LABEL", arg[1:-2]))
+        else:
+            ret.append(n)
+    return ret
+
+@macro(goto)
+def f():
+    n = 0
+    while n < 10:
+        if n > 5:
+            _ = "goto exit"
+        print(n)
+        n+=1
+    _ = "exit:"
+f() #prints 1 2 3 4 5 !
 ```
 
 please have fun writing your own macros! or just have fun looking at
