@@ -230,7 +230,7 @@ def arg_test(tuples):
     for n in tuples: print(n)
     return n
 
-@macro(arg_test)
-def test(a):
-    _ = "print(a)"
-test(3)
+#@macro(arg_test)
+#def test(a):
+#    _ = "print(a)"
+#test(3)
