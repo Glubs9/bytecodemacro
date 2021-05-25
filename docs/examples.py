@@ -1,3 +1,9 @@
+#in this file is described some cool examples
+#as a note: I use _ = "" in a lot of places. This is because I want to tell my macro some
+#information about where to place new syntax. I can't just put a string by itself without setting a
+#variable equal to it because if I did it would be optimized out by the python interpreter.
+#Hopefully I can find some way around this in the future, but for now this is how I have found it works.
+
 from bytecodemacro import * #probalby should individually import for readability but can't be bothered rn
 
 #this example demonstrates a basic macro that doesn't perform any manipulation on the function but it does demonstrate how the tuple is structured
@@ -218,3 +224,13 @@ def test():
     print() #should print 24 because (3+4+5)*2 == 24
     _ = "end"
 test()
+
+
+def arg_test(tuples):
+    for n in tuples: print(n)
+    return n
+
+@macro(arg_test)
+def test(a):
+    _ = "print(a)"
+test(3)

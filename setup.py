@@ -7,7 +7,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
         name="bytecodemacro",
-        version="2.0.7",
+        version="2.0.8",
         description="a macro library that expoes the bytecode of python",
         long_description=README,
         long_description_content_type="text/markdown",
