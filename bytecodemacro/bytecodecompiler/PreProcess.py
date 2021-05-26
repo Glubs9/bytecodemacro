@@ -72,6 +72,14 @@ def PreProcess(code_context_in, all_objects):
             else: lis.append(arg); arg = len(lis)-1 #maybe remove semi colon but I like how this looks
             return (lis, arg)
 
+    #sometimes when a variable is referenced in byte_compile it returns load_name so this fixes that
+    #by replacing it with load_fast
+        #this is slow but it doesn't matter
+    def remove_load_name_arg(v):
+        inst, arg = v
+        if arg in code_context_in.varnames and inst == "LOAD_NAME": inst = "LOAD_FAST" #it just works
+        return (inst, arg)
+
     #commands to lists is used in handle_literals
         #note: i am not sure how load_closurer works and it has something weird about freevars in it
     commands_to_lists = {"LOAD_CONST": constants, "LOAD_NAME": names, "LOAD_GLOBAL":
@@ -176,6 +184,7 @@ def PreProcess(code_context_in, all_objects):
             clean_args,
             add_arg, 
             lambda n: (n[0].upper(), n[1]), #makes the instructions uppercase (has to be a lambda cause .upper is a method (ruins my pointfree >:(
+            remove_load_name_arg, #this is a hack to just make stuff work better (it might cause issues in the future but for now it works well enough)
             handle_literals,
             handle_jump_absolute_literals
         )), #composes all the preproccessing that only needs a single line and not the context of other lines
