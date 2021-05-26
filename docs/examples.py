@@ -13,10 +13,9 @@ def macro_trace(tups):
 
 print("\nbefore macro trace")
 @macro(macro_trace)
-def test(a):
-    print("a passed as " + str(a))
-    return a
-print(test(3))
+def test():
+    print("hello world!")
+test()
 print("after macro trace\n")
 
 
@@ -63,10 +62,9 @@ def f():
         print(n)
         n+=1
     _ = "exit:"
-print("\nbefore goto example")
-f()
-print("after goto\n")
-
+print("\nbefore goto test")
+f() #prints 1 2 3 4 5
+print("after goto test\n")
 
 def constant(tups_in):
     ret = []

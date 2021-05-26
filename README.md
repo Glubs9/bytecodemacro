@@ -51,3 +51,4 @@ python3 -m pip install bytecodemacro
 	- fix walrus in examples
 	- test and then handle encountering the extended arg instruction in the uncompile package
 	- i am also still lost on closures and co_freevars
+	- printing a string also prints the ""
