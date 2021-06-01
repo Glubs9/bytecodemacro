@@ -66,6 +66,7 @@ print("\nbefore goto test")
 f() #prints 1 2 3 4 5
 print("after goto test\n")
 
+
 def constant(tups_in):
     ret = []
     constants = {}
@@ -219,9 +220,12 @@ def test():
     range(6)
     sum()
     mult_two()
-    print() #should print 24 because (3+4+5)*2 == 24
+    print() #prints 24 because (3+4+5)*2 == 24
     _ = "end"
+
+print("\n before join test")
 test()
+print("after join test \n")
 
 
 def arg_test(tuples):

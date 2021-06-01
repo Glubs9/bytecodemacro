@@ -1,8 +1,10 @@
+#this file uploads the source to PyPi
+    #most of this code is taken from https://medium.com/@joel.barmettler/how-to-upload-your-python-package-to-pypi-65edc5fe9c56
+
 import pathlib
 from setuptools import setup, find_packages
 
 HERE = pathlib.Path(__file__).parent
-
 README = (HERE / "README.md").read_text()
 
 setup(
@@ -15,9 +17,5 @@ setup(
         author="glubs9",
         author_email="jonte.fry@gmail.com", #please no spam
         license="GPLv3",
-        #classifiers=[ #apparnetly this is not a valid classifier idk how this works
-        #    "Programming Language :: Python :: 3.9",
-        #],
-        packages=find_packages() #can't be bothered to do properly
-        #i'm not too sure how to specify entry_points (or if i need to)
+        packages=find_packages()
 )
