@@ -48,6 +48,7 @@ python3 -m pip install bytecodemacro
 	- order examples.py by ease of understanding
 		- so the easy ones to read like constant and add_arg are at the top but the ones
 			that are harder like cloop or join are at the bottom
+	- add continuations to examples.py
 	- fix walrus in examples
 	- test and then handle encountering the extended arg instruction in the uncompile package
 	- i am also still lost on closures and co_freevars
