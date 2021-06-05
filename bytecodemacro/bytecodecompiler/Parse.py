@@ -13,7 +13,7 @@ def split(lines):
     all_objs = []
     for n in lines:
         if len(n) == 0 or n[0][0] == "#": continue #this is preprocessing which should be done in preprocess.py but
-                                 #i'm doing it here because the parser requires thsi to functoin
+                                 #i'm doing it here because the parser requires this to functoin
         elif n[0].upper() == "DEFINE":
             #remove empty lines here to properly work
             args = [i for i in n[2:] if i != ""]
@@ -32,10 +32,10 @@ def get_args(obj):
     tups = obj.bytes
     n = 0
     args = []
-    while tups[n][0] == "ADD_ARG":
-        args += tups[n][1]
+    while tups[n][0] == "ADD_ARG": #while instructions are add_arg
+        args += tups[n][1] #append to args
         n+=1
-    obj.varnames = args
+    obj.varnames = args #set args in varnames because that is where they are stored
     obj.arg_num = len(args)
     obj.bytes = obj.bytes[n:] #removes add_arg from the bytes
     return obj

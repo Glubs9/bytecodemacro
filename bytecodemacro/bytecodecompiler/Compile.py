@@ -8,5 +8,5 @@ import dis
 def Compile(BytesStr):
     ret = []
     for n in BytesStr:
-        ret += [dis.opmap[n[0]], n[1]]
+        ret += [dis.opmap[n[0]], n[1]] #dis.opmap converts string mneonic to it's byte equivalent
     return bytes(ret)
