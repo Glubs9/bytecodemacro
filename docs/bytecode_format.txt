@@ -64,20 +64,18 @@ DUP_TOP :: Duplicates the reference on top of the stack.
 DUP_TOP_TWO :: Duplicates the two references on top of the stack, leaving them in the same order.
 
 Unary operations:
-	Unary operations take the top of the stack, apply the operation, and push the result back on
-		the stack.
+	Unary operations take the top of the stack, apply the operation, and push the result back on the stack.
 
 UNARY_POSITIVE :: Implements TOS = +TOS.
 UNARY_NEGATIVE :: Implements TOS = -TOS.
 UNARY_NOT :: Implements TOS = not TOS.
 UNARY_INVERT :: Implements TOS = ~TOS.
 GET_ITER :: Implements TOS = iter(TOS).
-GET_YIELD_FROM_ITER :: If TOS is a generator iterator or coroutine object it is left as is. Otherwise, implements
-			  TOS = iter(TOS).
+GET_YIELD_FROM_ITER :: If TOS is a generator iterator or coroutine object it is left as is. Otherwise, implements TOS = iter(TOS).
 
 Binary operations:
 	Binary operations remove the top of the stack (TOS) and the second top-most stack item
-		(TOS1) from the stack. They perform the operation, and put the result back on the stack.
+	(TOS1) from the stack. They perform the operation, and put the result back on the stack.
 
 BINARY_POWER :: Implements TOS = TOS1 ** TOS.
 BINARY_MULTIPLY :: Implements TOS = TOS1 * TOS.

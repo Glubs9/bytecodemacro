@@ -164,8 +164,8 @@ def PreProcess(code_context_in, all_objects):
         ret = []
         for i, v in enumerate(lines):
             inst, arg = v 
-            if arg > 255: 
-                e = extended_args_instructions(arg >> 8)
+            if arg > 255:
+                e = extended_args_instructions(arg >> 8) #mafs
                 increment_labels_below(i, len(e))
                 arg = arg % 256
                 ret += e
